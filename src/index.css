@@ -1,0 +1,23 @@
+@import '~antd/dist/antd.css';
+
+html, body, #root{
+  width: 100vw;
+  height: 100vh;
+}
+
+
+/* LOGIN SCREEN */
+.login-form-holder{
+  margin-bottom: 250px;
+}
+
+.logo-img{
+  width: 200px;
+  height: auto;
+}
+
+.btn-text{
+  font-size: 16px;
+  font-weight: normal;
+  letter-spacing: 2px
+}
