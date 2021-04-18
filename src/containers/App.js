@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import LoginScreen from './LoginScreen';
 import MainScreen from './MainScreen';
+import AdminScreen from './AdminScreen';
 
 class App extends React.Component {
   render() {
@@ -18,6 +19,9 @@ class App extends React.Component {
           </Route>
           <Route exact path="/">
             <MainScreen />
+          </Route>
+          <Route exact path="/admin">
+            <AdminScreen />
           </Route>
         </Switch>
       </Router>
