@@ -12,7 +12,7 @@ html, body, #root{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
   height: auto;
   background-color: #f5f5f5;
 }
@@ -22,13 +22,24 @@ html, body, #root{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* width: 100vw;
-  height: 100vh; */
+}
+
+.general-layout-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 /* LOGIN SCREEN */
 .login-form-holder{
-  margin-bottom: 250px;
+  /* margin-bottom: 200px; */
+}
+
+.login-header-text{
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 2px;
 }
 
 .logo-img{
@@ -38,7 +49,7 @@ html, body, #root{
 
 .btn-text{
   font-size: 16px;
-  font-weight: normal;
+  font-weight: bold;
   letter-spacing: 2px
 }
 
@@ -55,7 +66,7 @@ html, body, #root{
 }
 
 .user-name{
-  font-size: 17px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -81,4 +92,88 @@ html, body, #root{
 
 .add-account-form{
   font-family: 'NoirPro', sans-serif;
+}
+
+/* FACULTY SCREEN */
+.btn-dropdown{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8DADF;
+  border: 0px
+}
+
+.btn-profile{
+  border: 0px;
+  padding: 20px 5px 20px 0px;
+}
+
+.btn-logo{
+  border: 0px;
+  height: auto;
+}
+
+.btn-profile:hover {
+  border: 0px;
+  border-radius: 20px;
+  padding: 20px 5px 20px 5px;
+  background-color: #f2f3f8;
+  color: black;
+}
+
+.header-avatar{
+  background-color: #7952B3
+}
+
+.bg-newsfeed{
+  background-color: #f5f5f5
+}
+
+.newsfeed-holder{
+  width: 70vw;
+}
+
+/* MENU SIDEBAR */
+.left-menu , .right-menu{
+  width: 25vw;
+  padding: 0px 30px;
+}
+
+.left-menu-name{
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.btn-left-menu{
+  border: 0px;
+  padding: 25px 15px;
+  width: 95%;
+  background-color: #f5f5f5;
+}
+
+.btn-left-menu:hover{
+  border-radius: 5px;
+  background-color: #E4E6E9;
+  color: black
+}
+
+.btn-left-menu-category{
+  border: 0px;
+  padding: 30px 15px;
+  width: 95%;
+  background-color: #f5f5f5;
+}
+
+.btn-left-menu-category:hover {
+  border-radius: 5px;
+  background-color: #E4E6E9;
+  color: black
+}
+
+
+
+.header-text{
+  font-size:18px;
+  color: gray;
+  font-weight: bold;
 }

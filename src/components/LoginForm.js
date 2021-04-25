@@ -32,10 +32,10 @@ class LoginForm extends Component {
       return <Redirect to="/" />;
     }
     return (
-      <div className="d-flex flex-column align-items-center justify-content-center w-100 h-100">
+      <div className="d-flex flex-column align-items-center justify-content-center w-100 py-5">
         <div className="d-flex flex-column align-items-center justify-content-center col-lg-4 col-xl-4 col-xxl-3 col-md-8 col-sm-10 col-11 login-form-holder bg-white">
           <img src={getImg()} className="logo-img" alt="logo truong" />
-          <h3 className="pt-5">Login</h3>
+          <span className="pt-5 login-header-text">Sign In</span>
           <Form
             name="normal_login"
             className="login-form w-100 pt-5"
@@ -61,7 +61,7 @@ class LoginForm extends Component {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" className="login-form-button w-100 py-4 d-flex align-items-center justify-content-center">
-                <span className="btn-text">Login</span>
+                <span className="btn-text">Log in</span>
               </Button>
             </Form.Item>
             <Divider plain>Or</Divider>

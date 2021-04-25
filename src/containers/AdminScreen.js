@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import AddAccount from '../components/admin/AddAccount';
 import Header from '../components/general/Header';
 import Footer from '../components/general/Footer';
@@ -16,4 +15,4 @@ class AdminScreen extends Component {
   }
 }
 
-export default connect()(AdminScreen);
+export default AdminScreen;

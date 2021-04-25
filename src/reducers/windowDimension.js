@@ -1,6 +1,6 @@
 const initState = {
   height: 0,
-  width: 0,
+  width: 1440,
 };
 
 const windowDimension = (state = initState, action) => {
