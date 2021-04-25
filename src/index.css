@@ -170,10 +170,55 @@ html, body, #root{
   color: black
 }
 
-
-
 .header-text{
   font-size:18px;
   color: gray;
   font-weight: bold;
+}
+
+.btn-menu-post{
+  border: 0px;
+  padding: 10px;
+  width: 95%;
+  height: fit-content;
+  background-color: #f5f5f5;
+}
+.btn-menu-post:hover {
+  border-radius: 5px;
+  background-color: #E4E6E9;
+  color: black
+}
+
+.post-holder{
+  height: 30vh;
+  overflow: auto;
+  width: 100%;
+}
+
+.noti-holder {
+  height: 35vh;
+  overflow: auto;
+  width: 100%;
+}
+
+.post-created-text{
+  color: #40a9ff;
+  font-weight: bold;
+}
+
+.category-noti-header{
+  font-size: 14px;
+  /* color: grey; */
+  font-style: italic;
+}
+
+.category-noti-header .post-created-text{
+  color: #40a9ff;
+  font-style: italic;
+}
+
+.content-noti-text {
+  font-size: 13px;
+  /* color: gray; */
+  padding-top: 10px;
 }

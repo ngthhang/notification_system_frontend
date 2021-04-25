@@ -4,7 +4,7 @@ import {
   Button, Avatar,
 } from 'antd';
 import { Redirect } from 'react-router-dom';
-import colorArray from '../../utils/colorArray';
+import colorArray from '../../../utils/colorArray';
 
 const MenuButtonCategory = (props) => {
   const [redirect, enableRedirect] = useState(false);

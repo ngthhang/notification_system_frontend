@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import LeftMenu from '../general/LeftMenu';
-import RightMenu from '../general/RightMenu';
+import LeftMenu from '../general/menuSidebar/LeftMenu';
+import RightMenu from '../general/menuSidebar/RightMenu';
 import NewsFeed from './NewsFeed';
 
 class MainPage extends Component {
