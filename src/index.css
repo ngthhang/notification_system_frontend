@@ -5,6 +5,7 @@ html, body, #root{
   width: 100vw;
   height: 100vh;
   font-family: 'NoirPro', sans-serif;
+  overflow-x: hidden;
 }
 
 .general-screen{
@@ -32,9 +33,6 @@ html, body, #root{
 }
 
 /* LOGIN SCREEN */
-.login-form-holder{
-  /* margin-bottom: 200px; */
-}
 
 .login-header-text{
   font-size: 28px;
@@ -125,18 +123,14 @@ html, body, #root{
   background-color: #7952B3
 }
 
-.bg-newsfeed{
-  background-color: #f5f5f5
-}
-
-.newsfeed-holder{
-  width: 70vw;
-}
-
 /* MENU SIDEBAR */
 .left-menu , .right-menu{
-  width: 25vw;
-  padding: 0px 30px;
+  padding: 0px 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start
 }
 
 .left-menu-name{
@@ -221,4 +215,300 @@ html, body, #root{
   font-size: 13px;
   /* color: gray; */
   padding-top: 10px;
+}
+
+/* CREATE POST */
+.create-post-input{
+  padding: 10px 15px;
+  margin-left: 10px;
+  border-radius: 20px;
+  border: 0px;
+  width: 90%;
+  cursor: pointer;
+  background-color: #F0F2F5
+}
+
+.create-post-input:hover {
+  cursor: pointer;
+  background-color: #E4E6E9
+}
+
+.create-post-holder{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 75%;
+  background-color: white;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.btn-create-post{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 75%;
+  border: 0px;
+  margin: 0px;
+  padding: 25px;
+  font-weight: bold;
+  font-size: 17px;
+  color: black
+}
+
+.btn-create-post:hover{
+  border-radius: 10px;
+  color: black;
+  background-color: #F0F2F5
+}
+
+.ant-modal-title{
+  color: black;
+  font-weight: bold;
+  padding: 5px;
+  text-align: center;
+}
+
+.textarea-text{
+  font-size: 18px;
+}
+
+/* LIST POST */ 
+.card-post , .card-noti{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  padding: 10px;
+  margin: 10px 0px;
+  width: 100%;
+}
+
+.card-noti-header-holder{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0px 20px;
+}
+
+.card-noti-poster{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.card-noti-poster .user{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px;
+}
+
+.card-noti-poster .create-time{
+  font-size: 13px;
+  font-weight: bold;
+  color: gray;
+}
+
+.card-noti-header-holder .btn-more{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
+  color: black
+}
+
+.card-noti-header-holder .btn-more:hover {
+  border: 0px;
+  background-color: #F0F2F5;
+  color: black
+}
+
+.card-noti-body{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0px 20px;
+}
+
+.card-noti-body .content{
+  font-size: 17px;
+}
+
+.card-noti-comment,
+.card-comment-input {
+  display: flex; 
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 5px 20px;
+}
+
+.content-holder .content{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 5px 15px;
+  background-color: #F0F2F5;
+  margin-left: 10px;
+  border-radius: 10px;
+}
+
+.card-noti-comment .content-holder {
+  display: flex;
+  width: fit-content;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.content-holder .footer{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: fit-content;
+  margin-left: 10px;
+  width: 100%;
+}
+
+.input-edit{
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 0px;
+  width: 90%;
+  margin-left: 0px;
+  margin-right: 10px;
+  cursor: pointer;
+  background-color: #F0F2F5
+}
+
+.footer .btn-more {
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
+  color: #4895ef
+}
+
+.footer .btn-more:hover {
+  border: 0px;
+  background-color: #4895ef;
+  color: white
+}
+
+.footer .btn-edit{
+  padding: 0px
+}
+
+.footer .btn-edit span{
+  font-size: 12px;
+  color: grey;
+  font-weight: bold;
+}
+
+.btn-edit span:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.card-noti-comment-list{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.count-text{
+  font-size: 15px;
+  color: grey;
+}
+
+.count-text:hover{
+  text-decoration: underline;
+}
+
+.user-name .user-comment-tag{
+  color: white;
+  font-size: 10px;
+  font-weight: normal;
+  background-color: #4895ef;
+  padding: 1px 4px;
+  border-radius: 6px;
+}
+
+.card-comment-input{
+  padding: 10px 10px 10px 20px;
+}
+
+.input-comment{
+  padding: 10px 15px;
+  margin: 0px 10px;
+  border-radius: 20px;
+  border: 0px;
+  width: 85%;
+  cursor: pointer;
+  background-color: #F0F2F5
+}
+
+.card-comment-input .btn-more {
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
+  color: #4895ef
+}
+
+.card-comment-input .btn-more:hover {
+  border: 0px;
+  background-color: #4895ef;
+  color: white
+}
+
+.more-comment{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 20px;
+  width: 100%;
+}
+
+.more-comment .text-more, .more-comment .text-count{
+  color: grey;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.more-comment .text-count{
+  font-weight: normal;
+}
+
+.more-comment .text-more:hover {
+  cursor: pointer;
+  text-decoration: underline
+}
+
+.col-img {
+  height: fit-content;
 }

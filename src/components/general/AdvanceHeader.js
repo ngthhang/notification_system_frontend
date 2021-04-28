@@ -5,7 +5,7 @@ import {
   Avatar, Dropdown, Menu, Button, Tooltip,
 } from 'antd';
 import {
-  UserOutlined, CaretDownOutlined, PlusOutlined, LogoutOutlined,
+  UserOutlined, CaretDownOutlined, LogoutOutlined,
 } from '@ant-design/icons';
 import changeRedirect from '../../actions/redirectFaculty';
 
@@ -101,7 +101,7 @@ class AdvanceHeader extends Component {
       }
     }
     return (
-      <div className="admin-header d-flex bg-white flex-row w-100 align-items-center justify-content-between px-4 py-2 mb-3">
+      <div className="admin-header sticky-top d-flex bg-white flex-row w-100 align-items-center justify-content-between px-4 py-2 mb-3">
         <Button onClick={this.redirectNewsFeed} className="btn-logo">
           <img src={logo} alt="logo truong" className="logo-header" />
         </Button>
@@ -110,9 +110,6 @@ class AdvanceHeader extends Component {
             <Avatar className="d-flex align-items-center justify-content-center header-avatar" icon={<UserOutlined />} />
             <span className="user-name mx-2">Khoa CNTT</span>
           </Button>
-          <Tooltip title="Tạo">
-            <Button onClick={this.redirectToCreatePost} className="general-layout btn-dropdown" shape="circle" size="large" icon={<PlusOutlined />} />
-          </Tooltip>
           <Tooltip title="Tài khoản">
             <Dropdown overlay={this.menu} trigger="click" className="mx-2">
               <Button className="general-layout btn-dropdown" shape="circle" size="large" icon={<CaretDownOutlined />} />

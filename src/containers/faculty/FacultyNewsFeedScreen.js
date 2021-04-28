@@ -7,7 +7,7 @@ import Footer from '../../components/general/Footer';
 class FacultyNewsFeedScreen extends Component {
   render() {
     return (
-      <div className="general-screen h-100">
+      <div className="general-screen">
         <AdvanceHeader />
         <MainPage />
         <Footer />

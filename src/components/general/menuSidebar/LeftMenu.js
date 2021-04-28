@@ -4,8 +4,10 @@ import CategoryMenuList from './CategoryMenuList';
 
 class LeftMenu extends Component {
   render() {
+    const { onMouseOver } = this.props;
+    console.log(onMouseOver);
     return (
-      <div className="general-layout h-100 align-items-start justify-content-start left-menu">
+      <div className="left-menu">
         <LeftMenuProfile />
         <CategoryMenuList />
       </div>
