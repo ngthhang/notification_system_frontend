@@ -17,7 +17,7 @@ const NotiContent = ({ images }) => {
         <Row className="w-100 my-2">
           {images.map((item) => (
             <Col span={span} className="px-1">
-              <Image src={item} height={200} />
+              <Image src={item} height={250} />
             </Col>
           ))}
         </Row>

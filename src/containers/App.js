@@ -8,9 +8,9 @@ import {
 import LoginScreen from './LoginScreen';
 import MainScreen from './MainScreen';
 import AdminScreen from './AdminScreen';
-import FacultyPostScreen from './faculty/FacultyPostScreen';
 import FacultyNewsFeedScreen from './faculty/FacultyNewsFeedScreen';
 import FacultyProfileScreen from './faculty/FacultyProfileScreen';
+import ListCategoriesScreen from './ListCategoriesScreen';
 
 class App extends React.Component {
   render() {
@@ -26,14 +26,14 @@ class App extends React.Component {
           <Route exact path="/admin">
             <AdminScreen />
           </Route>
-          <Route exact path="/faculty/post">
-            <FacultyPostScreen />
-          </Route>
           <Route exact path="/faculty">
             <FacultyNewsFeedScreen />
           </Route>
           <Route exact path="/faculty/profile">
             <FacultyProfileScreen />
+          </Route>
+          <Route exact path="/categories">
+            <ListCategoriesScreen />
           </Route>
         </Switch>
       </Router>

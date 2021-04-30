@@ -5,6 +5,7 @@ import {
   Button,
 } from 'antd';
 import MenuButtonCategory from './MenuButtonCategory';
+import changeRedirect from '../../../actions/redirectFaculty';
 
 const categoryList = [
   {
@@ -19,17 +20,15 @@ const categoryList = [
   },
 ];
 
-const CategoryMenuList = () => {
+const CategoryMenuList = ({ dispatch }) => {
   const [redirect, enableRedirect] = useState(false);
   if (redirect) {
-    return (
-      <Redirect to="/category/:id" />
-    );
+    return <Redirect to="/categories" />;
   }
 
   const redirectToAllCategories = () => {
     enableRedirect(true);
-    console.log('hello');
+    dispatch(changeRedirect('categories'));
   };
 
   return (

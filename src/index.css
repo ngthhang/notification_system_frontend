@@ -512,3 +512,100 @@ html, body, #root{
 .col-img {
   height: fit-content;
 }
+
+/* PROFILE SCREEN */
+.profile-name{
+  font-size: 20px;
+  color: white
+}
+
+.profile-role{
+  font-size: 17px;
+  color: white;
+  font-weight: bold
+}
+
+.profile-about{
+  display: flex;
+  flex-direction: column;
+  justify-content:center;
+  align-items: flex-start;
+  border-radius: 10px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.profile-about .header{
+  font-size: 17px;
+  color: #002447;
+
+}
+
+.bg-header{
+  background-color: #002447
+}
+
+.btn-change-avatar{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0px;
+  background-color: #F0F2F5;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  border: 0px;
+}
+
+.btn-change-avatar:hover{
+  background-color: #D8DADF;
+  color: black;
+}
+
+/* LIST CATEGORIES */
+.card-category{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 0px;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.card-category .header{
+  border-radius: 10px 10px 0px 0px;
+}
+
+.card-category .name{
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.card-category .btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 100%;
+  border-radius: 10px;
+  background-color: #F0F2F5;
+  padding: 10px 0px;
+  font-size: 15px;
+  font-weight: bold;
+  border: 0px;
+  margin-top: 30px;
+}
+
+.list-header{
+  font-size: 20px;
+  margin-top: 30px;
+  font-weight: bold;
+}
+
+.card-category .btn:hover{
+  background-color: #D8DADF;
+  color: black;
+}

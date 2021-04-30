@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Profile from '../../components/general/Profile';
+import Profile from '../../components/general/profile/Profile';
 import AdvanceHeader from '../../components/general/AdvanceHeader';
 import Footer from '../../components/general/Footer';
 

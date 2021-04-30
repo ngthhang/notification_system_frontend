@@ -46,15 +46,6 @@ class AdvanceHeader extends Component {
     }
   };
 
-  redirectToCreatePost = () => {
-    const { dispatch, redirectFaculty } = this.props;
-    if (redirectFaculty === 'post') {
-      return;
-    }
-    this.enableRedirect();
-    dispatch(changeRedirect('post'));
-  }
-
   redirectProfile = () => {
     const { dispatch, redirectFaculty } = this.props;
     if (redirectFaculty === 'profile') {
@@ -65,7 +56,10 @@ class AdvanceHeader extends Component {
   }
 
   redirectNewsFeed = () => {
-    const { dispatch } = this.props;
+    const { dispatch, redirectFaculty } = this.props;
+    if (redirectFaculty === 'newsfeed') {
+      return;
+    }
     this.enableRedirect();
     dispatch(changeRedirect('newsfeed'));
   }
@@ -85,11 +79,8 @@ class AdvanceHeader extends Component {
   render() {
     const { logo, redirectFaculty } = this.props;
     const { redirect } = this.state;
-    console.log(redirectFaculty);
     if (redirect) {
       switch (redirectFaculty) {
-        case 'post':
-          return <Redirect to="/faculty/post" />;
         case 'logout':
           return <Redirect to="/login" />;
         case 'profile':
@@ -101,7 +92,7 @@ class AdvanceHeader extends Component {
       }
     }
     return (
-      <div className="admin-header sticky-top d-flex bg-white flex-row w-100 align-items-center justify-content-between px-4 py-2 mb-3">
+      <div className="admin-header sticky-top d-flex bg-white flex-row w-100 align-items-center justify-content-between px-4 py-2">
         <Button onClick={this.redirectNewsFeed} className="btn-logo">
           <img src={logo} alt="logo truong" className="logo-header" />
         </Button>
