@@ -1,26 +1,21 @@
 import React from 'react';
-import { Image, Row, Col } from 'antd';
+import NotiImageGroup from './NotiImageGroup';
+import NotiVideo from './NotiVideo';
 
 const NotiContent = ({ noti }) => {
-  const { header, content, images } = noti;
+  const {
+    header, content, images, video,
+  } = noti;
+  const isHaveVideo = !!(video && video !== null && video !== '');
   return (
     <div className="card-noti-body">
       <span className="text-wrap user-name text-uppercase">{header}</span>
       <span className="text-wrap content">{content}</span>
+      {isHaveVideo ? <NotiVideo video={video} /> : null }
       {images && images.length > 0 ? (
-        <Row className="py-2">
-          <Image.PreviewGroup>
-            {images.map((item) => (
-              <Col span={12} className="col-img">
-                <Image
-                  className="pt-2 px-1"
-                  src={item}
-                />
-              </Col>
-            ))}
-          </Image.PreviewGroup>
-        </Row>
+        <NotiImageGroup images={images} />
       ) : null}
+
     </div>
   );
 };
