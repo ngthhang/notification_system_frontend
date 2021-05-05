@@ -2,27 +2,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { message } from 'antd';
-import AddAccount from '../components/admin/AddAccount';
+import MainPage from '../components/faculty/MainPage';
 import AdvanceHeader from '../components/general/AdvanceHeader';
 import Footer from '../components/general/Footer';
+import { auth } from '../services/auth.service';
 
-const AdminScreen = ({ currentUser }) => {
-  const { token } = currentUser;
-  if (token === null && token === '') {
+const NewsFeedScreen = () => {
+  if (!auth()) {
     message.error('Bạn chưa đăng nhập');
     return <Redirect to="/login" />;
   }
   return (
     <div className="general-screen">
       <AdvanceHeader />
-      <AddAccount />
+      <MainPage />
       <Footer />
     </div>
   );
 };
-
-const mapStateToProps = (state) => ({
-  currentUser: state.currentUser,
-});
-
-export default connect(mapStateToProps)(AdminScreen);
+export default connect()(NewsFeedScreen);

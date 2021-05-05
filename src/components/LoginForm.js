@@ -1,36 +1,51 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
-  Form, Input, Button, Divider,
+  Form, Input, Button, Divider, message,
 } from 'antd';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
-import { enableRedirect } from '../actions/redirectLogin';
+import {
+  UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined,
+} from '@ant-design/icons';
+import { auth } from '../services/auth.service';
+import { login } from '../services/user.service';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const getImg = () => {
   const tmp = require('../assets/images/logo.png');
   return tmp.default;
 };
+const LoginForm = () => {
+  const [redirect, enableRedirect] = useState(false);
 
-class LoginForm extends Component {
-  static loginByGoogle() {
-    console.log('hello');
-  }
-
-  onFinish = (values) => {
-    const { dispatch } = this.props;
+  const onFinish = async (values) => {
     console.log('Received values of form: ', values);
-    const { username, password } = values;
-    if (username === 'n' && password === '1') {
-      dispatch(enableRedirect());
+    try {
+      const res = await login(values);
+      const { code } = res.data;
+      const dataMessage = res.data.message;
+      if (code === 0) {
+        return message.error(dataMessage);
+      }
+      const { user, token } = res.data;
+      const { _id, role } = user;
+      message.success('Đăng nhập thành công');
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', _id);
+      localStorage.setItem('role', role);
+      enableRedirect(true);
+    } catch (e) {
+      const m = e.response.data.message;
+      message.error(m);
     }
+    return 0;
+  };
+
+  if (redirect) {
+    return <Redirect to="/" />;
   }
 
-  render() {
-    const { redirect } = this.props;
-    if (redirect) {
-      return <Redirect to="/" />;
-    }
+  if (!auth()) {
     return (
       <div className="d-flex flex-column align-items-center justify-content-center w-100 py-5">
         <div className="d-flex flex-column align-items-center justify-content-center col-lg-4 col-xl-4 col-xxl-3 col-md-8 col-sm-10 col-11 login-form-holder bg-white">
@@ -40,7 +55,7 @@ class LoginForm extends Component {
             name="normal_login"
             className="login-form w-100 pt-5"
             initialValues={{ remember: true }}
-            onFinish={this.onFinish}
+            onFinish={onFinish}
           >
             <Form.Item
               name="username"
@@ -52,11 +67,12 @@ class LoginForm extends Component {
               name="password"
               rules={[{ required: true, message: 'Please input your Password!' }]}
             >
-              <Input
+              <Input.Password
                 className="py-2"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
             <Form.Item>
@@ -66,19 +82,14 @@ class LoginForm extends Component {
             </Form.Item>
             <Divider plain>Or</Divider>
             <Form.Item>
-              <Button danger onClick={this.loginByGoogle} icon={<GoogleOutlined />} className="login-form-button w-100 py-4 d-flex align-items-center justify-content-center">
-                <span className="btn-text">Login by Google</span>
-              </Button>
+              <GoogleLoginButton />
             </Form.Item>
           </Form>
         </div>
       </div>
     );
   }
-}
+  return <Redirect to="/" />;
+};
 
-const mapStateToProps = (state) => ({
-  redirect: state.redirectLogin,
-});
-
-export default connect(mapStateToProps)(LoginForm);
+export default connect()(LoginForm);

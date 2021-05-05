@@ -10,7 +10,7 @@ function LeftMenuProfile() {
   const [redirect, enableRedirect] = useState(false);
   if (redirect) {
     return (
-      <Redirect to="/faculty/profile" />
+      <Redirect to="/profile" />
     );
   }
   return (

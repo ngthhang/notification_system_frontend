@@ -609,3 +609,9 @@ html, body, #root{
   background-color: #D8DADF;
   color: black;
 }
+
+.text-update{
+  font-size: 13px;
+  color: gray;
+  font-weight: bold
+}

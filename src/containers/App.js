@@ -6,11 +6,11 @@ import {
   Route,
 } from 'react-router-dom';
 import LoginScreen from './LoginScreen';
-import MainScreen from './MainScreen';
 import AdminScreen from './AdminScreen';
-import FacultyNewsFeedScreen from './faculty/FacultyNewsFeedScreen';
-import FacultyProfileScreen from './faculty/FacultyProfileScreen';
+import NewsFeedScreen from './NewsFeedScreen';
+import ProfileScreen from './ProfileScreen';
 import ListCategoriesScreen from './ListCategoriesScreen';
+import NotFound from './NotFound';
 
 class App extends React.Component {
   render() {
@@ -20,20 +20,18 @@ class App extends React.Component {
           <Route exact path="/login">
             <LoginScreen />
           </Route>
-          <Route exact path="/">
-            <MainScreen />
-          </Route>
           <Route exact path="/admin">
             <AdminScreen />
           </Route>
-          <Route exact path="/faculty">
-            <FacultyNewsFeedScreen />
+          <Route exact path="/">
+            <NewsFeedScreen />
           </Route>
-          <Route exact path="/faculty/profile">
-            <FacultyProfileScreen />
-          </Route>
+          <Route exact path="/profile/:role/:id" render={(props) => <ProfileScreen {...props} />} />
           <Route exact path="/categories">
             <ListCategoriesScreen />
+          </Route>
+          <Route>
+            <NotFound />
           </Route>
         </Switch>
       </Router>

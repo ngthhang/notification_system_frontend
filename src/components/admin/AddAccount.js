@@ -9,9 +9,12 @@ import {
   Row, Col,
 } from 'antd';
 import setDimension from '../../actions/windowDimension';
+import changeRedirect from '../../actions/redirectFaculty';
 
 class AddAccount extends Component {
   componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(changeRedirect('create-account'));
     window.addEventListener('resize', this.updateDimensions);
   }
 
@@ -36,7 +39,7 @@ class AddAccount extends Component {
     const { windowDimension } = this.props;
     const { width } = windowDimension;
     return (
-      <div className="general-layout">
+      <div className="general-layout mt-4">
         <div className="col-xl-9 col-xxl-9 col-lg-9 col-md-11 col-sm-11 col-11 align-items-center justify-content-center bg-white card-add-account p-3">
           <span className="header-text align-self-center pt-4">TẠO TÀI KHOẢN</span>
           <Form

@@ -1,5 +1,7 @@
 import React from 'react';
-import { GoogleOutlined, HomeOutlined, IdcardOutlined } from '@ant-design/icons';
+import {
+  GoogleOutlined, HomeOutlined, IdcardOutlined, TeamOutlined,
+} from '@ant-design/icons';
 
 const chooseIcon = (type) => {
   switch (type) {
@@ -10,7 +12,7 @@ const chooseIcon = (type) => {
     case 'email':
       return <GoogleOutlined style={{ fontSize: '35px', color: '#fa8c16 ' }} />;
     default:
-      return null;
+      return <TeamOutlined style={{ fontSize: '35px', color: '#fa8c16 ' }} />;
   }
 };
 
@@ -23,19 +25,24 @@ const chooseLabel = (type) => {
     case 'email':
       return <span>Email</span>;
     default:
-      return null;
+      return <span>Lớp</span>;
   }
 };
 
 const ProfileAboutDetail = ({ value, type }) => {
   const icon = chooseIcon(type);
+  const isNull = !value || value === '' || value === null || value === undefined;
   const labelText = chooseLabel(type);
   return (
     <div className="general-layout-row pb-3">
       {icon}
       <div className="general-layout align-items-start mx-3">
         {labelText}
-        <span className="user-name">{value}</span>
+        {isNull ? (
+          <span className="text-update">Thêm thông tin chi tiết</span>
+        ) : (
+          <span className="user-name">{value}</span>
+        )}
       </div>
     </div>
   );

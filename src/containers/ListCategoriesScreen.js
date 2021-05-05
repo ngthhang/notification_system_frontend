@@ -1,14 +1,26 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { message } from 'antd';
+import { Redirect } from 'react-router-dom';
 import ListCategories from '../components/general/ListCategories';
-import AdvanceHeader from '../components/general/AdvanceHeader';
-import Footer from '../components/general/Footer';
+import changeRedirect from '../actions/redirectFaculty';
 
-const ListCategoriesScreen = () => (
-  <div className="general-screen">
-    <AdvanceHeader />
-    <ListCategories />
-    <Footer />
-  </div>
-);
+const ListCategoriesScreen = ({ dispatch, currentUser }) => {
+  dispatch(changeRedirect('list-categories'));
+  const { token } = currentUser;
+  if (!token && token === '') {
+    message.error('Bạn chưa đăng nhập');
+    return <Redirect to="/login" />;
+  }
+  return (
+    <div className="general-layout">
+      <ListCategories />
+    </div>
+  );
+};
 
-export default ListCategoriesScreen;
+const mapStateToProps = (state) => ({
+  currentUser: state.currentUser,
+});
+
+export default connect(mapStateToProps)(ListCategoriesScreen);

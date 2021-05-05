@@ -5,24 +5,32 @@ import {
   Avatar, Dropdown, Menu, Button, Tooltip,
 } from 'antd';
 import {
-  UserOutlined, CaretDownOutlined, LogoutOutlined,
+  UserOutlined, CaretDownOutlined, LogoutOutlined, PlusOutlined,
 } from '@ant-design/icons';
 import changeRedirect from '../../actions/redirectFaculty';
+import { findUser } from '../../services/user.service';
+import { logOut } from '../../services/auth.service';
+import { findStudent } from '../../services/student.service';
 
 class AdvanceHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
       redirect: false,
+      user: {},
+      role: '',
+      id: '',
     };
     this.menu = (
       <Menu style={{ width: 250 }} onClick={this.onClick}>
-        <Menu.Item key="1">
-          <div className="d-flex flex-row align-items-center justify-content-start py-2">
-            <Button className="general-layout btn-dropdown" shape="circle" icon={<UserOutlined />} />
-            <span className="user-name px-2">Xem trang cá nhân</span>
-          </div>
-        </Menu.Item>
+        {this.state.role === 'student' ? (
+          <Menu.Item key="1">
+            <div className="d-flex flex-row align-items-center justify-content-start py-2">
+              <Button className="general-layout btn-dropdown" shape="circle" icon={<UserOutlined />} />
+              <span className="user-name px-2">Xem trang cá nhân</span>
+            </div>
+          </Menu.Item>
+        ) : null}
         <Menu.Item key="3">
           <div className="d-flex flex-row align-items-center justify-content-start py-2">
             <Button onClick={this.logOut} className="general-layout btn-dropdown" shape="circle" icon={<LogoutOutlined />} />
@@ -31,6 +39,42 @@ class AdvanceHeader extends Component {
         </Menu.Item>
       </Menu>
     );
+  }
+
+  async componentDidMount() {
+    const currentRole = localStorage.getItem('role');
+    const currentId = localStorage.getItem('user');
+    let data;
+    switch (currentRole) {
+      case 'student':
+        data = await findStudent(currentId);
+        if (data.code === 0 || data.code === 13) {
+          logOut();
+          this.logOut();
+          break;
+        }
+        this.setState({
+          user: data,
+        });
+        break;
+      case 'Faculty':
+        data = await findUser(currentId);
+        if (data.code === 0 || data.code === 13) {
+          logOut();
+          this.logOut();
+          break;
+        }
+        this.setState({
+          user: data,
+        });
+        break;
+      default: break;
+    }
+
+    this.setState({
+      role: currentRole,
+      id: currentId,
+    });
   }
 
   onClick = ({ key }) => {
@@ -78,15 +122,20 @@ class AdvanceHeader extends Component {
 
   render() {
     const { logo, redirectFaculty } = this.props;
-    const { redirect } = this.state;
+    const {
+      redirect, user, role, id,
+    } = this.state;
     if (redirect) {
       switch (redirectFaculty) {
         case 'logout':
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('role');
           return <Redirect to="/login" />;
         case 'profile':
-          return <Redirect to="/faculty/profile" />;
+          return <Redirect to={`/profile/${role}/${id}`} />;
         case 'newsfeed':
-          return <Redirect to="/faculty" />;
+          return <Redirect to="/" />;
         default:
           break;
       }
@@ -98,9 +147,14 @@ class AdvanceHeader extends Component {
         </Button>
         <div className="w-75 d-flex align-items-center justify-content-end">
           <Button onClick={this.redirectProfile} className="general-layout btn-profile flex-row mx-2">
-            <Avatar className="d-flex align-items-center justify-content-center header-avatar" icon={<UserOutlined />} />
-            <span className="user-name mx-2">Khoa CNTT</span>
+            <Avatar className="d-flex align-items-center justify-content-center header-avatar" icon={<UserOutlined />} src={user && role === 'student' ? user.avatar : ''} />
+            <span className="user-name mx-2">{user && role === 'student' ? user.display_name : user.name}</span>
           </Button>
+          {role === 'Admin' ? (
+            <Tooltip title="Tạo tài khoản">
+              <Button className="general-layout btn-dropdown mx-2" shape="circle" size="large" icon={<PlusOutlined />} />
+            </Tooltip>
+          ) : null}
           <Tooltip title="Tài khoản">
             <Dropdown overlay={this.menu} trigger="click" className="mx-2">
               <Button className="general-layout btn-dropdown" shape="circle" size="large" icon={<CaretDownOutlined />} />
