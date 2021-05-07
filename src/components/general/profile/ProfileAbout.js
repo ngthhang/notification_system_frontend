@@ -1,40 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Row, Col, Divider, Button, Modal, Input, Upload,
 } from 'antd';
+import { connect } from 'react-redux';
 import { UploadOutlined } from '@ant-design/icons';
 import { updateStudent } from '../../../services/student.service';
 import ProfileListDetail from './ProfileListDetail';
 import ProfileListPost from './ProfileListPost';
 
-const ProfileAbout = ({ user }) => {
+const ProfileAbout = ({
+  user, postList, postUpdated, currentUser,
+}) => {
   const [isModalVisible, showModal] = useState(false);
-  const [faculty, changeFaculty] = useState(user.faculty_name);
-  const [studentClass, changeClass] = useState(user.class_name);
+  const [faculty, changeFaculty] = useState('');
+  const [studentClass, changeClass] = useState('');
   const [currentFile, setFile] = useState('');
   const studentId = localStorage.getItem('user');
   const isCurrentUser = studentId === user.student_id;
 
-  const handleChangeInfo = async () => {
-    if (faculty === undefined) {
-      changeFaculty(user.faculty_name);
-    }
-    if (studentClass === undefined) {
-      chanegClass(user.class_name);
-    }
-    const data = {
-      faculty_name: faculty,
-      class_name: studentClass,
-      avatar: currentFile,
-    };
-    console.log(data);
-    const res = await updateStudent(data, user.student_id);
-    console.log(res);
-  };
+  useEffect(() => {
+    changeFaculty(user.faculty_name);
+    changeClass(user.class_name);
+  }, [postUpdated]);
 
-  const handleOk = () => {
+  const handleOk = async () => {
+    let data;
+    const isEditFaculty = faculty === undefined || faculty === 'undefined';
+    const isEditClass = studentClass === undefined || studentClass === 'undefined';
+    if (isEditFaculty) {
+      data = {
+        class_name: studentClass,
+        avatar: currentFile,
+      };
+    }
+    if (isEditClass) {
+      data = {
+        faculty_name: faculty,
+        avatar: currentFile,
+      };
+    }
+
+    if (!isEditFaculty && !isEditClass) {
+      data = {
+        class_name: studentClass,
+        faculty_name: faculty,
+        avatar: currentFile,
+      };
+    }
+    await updateStudent(data, user.student_id);
     showModal(false);
-    handleChangeInfo();
   };
 
   const handleCancel = () => {
@@ -62,7 +76,7 @@ const ProfileAbout = ({ user }) => {
           {isCurrentUser ? <Button onClick={() => showModal(true)} className="btn-change-avatar mb-3">Chỉnh sửa chi tiết</Button> : null}
         </Col>
         <Col offset={1} span={14} xs={22} md={22} lg={14}>
-          <ProfileListPost user={user} isCurrentUser={isCurrentUser} />
+          <ProfileListPost currentUser={currentUser} postList={postList} user={user} isCurrentUser={isCurrentUser} />
         </Col>
       </Row>
       <Modal
@@ -82,9 +96,9 @@ const ProfileAbout = ({ user }) => {
         onCancel={handleCancel}
       >
         <span className="user-name pt-3 pb-2">Lớp</span>
-        <Input className="textarea-text" onChange={(e) => changeClass(e.target.value)} placeholder="Nhập lớp của bạn" defaultValue={user.class_name} />
+        <Input className="textarea-text" onChange={(e) => changeClass(e.target.value)} placeholder="Nhập lớp của bạn" defaultValue={user.class_name !== 'undefined' ? user.class_name : null} />
         <span className="user-name pt-3 pb-2">Khoa</span>
-        <Input className="textarea-text" onChange={(e) => changeFaculty(e.target.value)} placeholder="Nhập khoa của bạn" defaultValue={user.faculty_name} />
+        <Input className="textarea-text" onChange={(e) => changeFaculty(e.target.value)} placeholder="Nhập khoa của bạn" defaultValue={user.faculty_name !== 'undefined' ? user.faculty_name : null} />
         <Upload
           {...props}
           maxCount={1}
@@ -98,4 +112,8 @@ const ProfileAbout = ({ user }) => {
   );
 };
 
-export default ProfileAbout;
+const mapStateToProps = (state) => ({
+  postUpdated: state.updatePost,
+});
+
+export default connect(mapStateToProps)(ProfileAbout);

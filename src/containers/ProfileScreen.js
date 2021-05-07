@@ -24,6 +24,7 @@ const ProfileScreen = ({ match }) => {
 
 const mapStateToProps = (state) => ({
   currentUser: state.currentUser,
+  updatePost: state.updatePost,
 });
 
 export default connect(mapStateToProps)(ProfileScreen);

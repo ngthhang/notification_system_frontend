@@ -4,8 +4,6 @@ import CategoryMenuList from './CategoryMenuList';
 
 class LeftMenu extends Component {
   render() {
-    const { onMouseOver } = this.props;
-    console.log(onMouseOver);
     return (
       <div className="left-menu">
         <LeftMenuProfile />

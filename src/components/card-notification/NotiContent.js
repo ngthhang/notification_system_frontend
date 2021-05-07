@@ -4,16 +4,16 @@ import NotiVideo from './NotiVideo';
 
 const NotiContent = ({ noti }) => {
   const {
-    header, content, images, video,
+    header, content, image, video, _id,
   } = noti;
-  const isHaveVideo = !!(video && video !== null && video !== '');
+  const isHaveVideo = (video && video !== null && video !== '' && video !== undefined && video !== 'undefined');
   return (
-    <div className="card-noti-body">
+    <div className="card-noti-body" key={noti._id}>
       <span className="text-wrap user-name text-uppercase">{header}</span>
       <span className="text-wrap content">{content}</span>
       {isHaveVideo ? <NotiVideo video={video} /> : null }
-      {images && images.length > 0 ? (
-        <NotiImageGroup images={images} />
+      {image && image.length > 0 ? (
+        <NotiImageGroup images={image} id={_id} />
       ) : null}
 
     </div>

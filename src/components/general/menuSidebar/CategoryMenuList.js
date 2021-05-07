@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import {
@@ -6,22 +6,17 @@ import {
 } from 'antd';
 import MenuButtonCategory from './MenuButtonCategory';
 import changeRedirect from '../../../actions/redirectFaculty';
-
-const categoryList = [
-  {
-    id: 'CNTT',
-    name: 'Khoa cong nghệ thông tin',
-    aliasKey: 'CNTT',
-  },
-  {
-    id: 'QTKD',
-    name: 'Khoa Quản trị kinh doanh',
-    aliasKey: 'QTKD',
-  },
-];
+import { getAllCategories } from '../../../services/categories.service';
 
 const CategoryMenuList = ({ dispatch }) => {
   const [redirect, enableRedirect] = useState(false);
+  const [listCategories, setListCategories] = useState([]);
+
+  useEffect(async () => {
+    const data = await getAllCategories();
+    setListCategories(data.data);
+  }, []);
+
   if (redirect) {
     return <Redirect to="/categories" />;
   }
@@ -37,8 +32,8 @@ const CategoryMenuList = ({ dispatch }) => {
         <span className="header-text">Chuyên mục</span>
         <Button type="link" onClick={redirectToAllCategories}>Xem tất cả</Button>
       </div>
-      {categoryList.map((item) => (
-        <MenuButtonCategory key={item.id} name={item.name} aliasKey={item.aliasKey} />
+      {listCategories && listCategories.length > 0 && listCategories.map((item) => (
+        <MenuButtonCategory key={item._id} id={item._id} name={item.name} aliasKey={item.alias_key} />
       ))}
 
     </div>

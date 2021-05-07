@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,6 +9,7 @@ import AdminScreen from './AdminScreen';
 import NewsFeedScreen from './NewsFeedScreen';
 import ProfileScreen from './ProfileScreen';
 import ListCategoriesScreen from './ListCategoriesScreen';
+import CategoriesDetail from './CategoriesDetail';
 import NotFound from './NotFound';
 
 class App extends React.Component {
@@ -30,6 +30,7 @@ class App extends React.Component {
           <Route exact path="/categories">
             <ListCategoriesScreen />
           </Route>
+          <Route exact path="/categories/:aliasKey" render={(props) => <CategoriesDetail {...props} />} />
           <Route>
             <NotFound />
           </Route>
@@ -39,4 +40,4 @@ class App extends React.Component {
   }
 }
 
-export default connect()(App);
+export default App;

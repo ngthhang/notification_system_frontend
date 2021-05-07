@@ -1,79 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Divider, Button } from 'antd';
+import { connect } from 'react-redux';
 import UserComment from './UserComment';
 import CommentInput from './CommentInput';
 
-const comments = [
-  {
-    id: 'asdfaertio',
-    user: {
-      role: 'student',
-      name: 'Nguyen Thuy Hang',
-      avatar: '',
-      id: '12331252345',
-    },
-    content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer',
-  },
-  {
-    id: 'adddd',
-    user: {
-      role: 'student',
-      name: 'Nguyen Thuy Hang',
-      avatar: '',
-      id: '123',
-    },
-    content: 'asdfjklhalfhlafh',
-  },
-  {
-    id: 'asdfaertsghlkeio',
-    user: {
-      role: 'student',
-      name: 'Nguyen Thuy Hang',
-      avatar: '',
-      id: '12331252345',
-    },
-    content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry',
-  },
-  {
-    id: '112asdfaertsghlkeio',
-    user: {
-      role: 'faculty',
-      name: 'Nguyen Trung',
-      avatar: '',
-      id: '12331252345',
-    },
-    content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry',
-  },
-];
-
-const currentUser = {
-  avatar: '',
-  id: '123',
-  name: 'Nguyen Thuy Hang',
-};
-
-const ListComment = () => {
+const ListComment = ({
+  postId, comments, totalComment, commentUpdated, currentUser,
+}) => {
   const [isShowComment, showComment] = useState(false);
+  const [currentShowComments, setShowComments] = useState(comments);
+
+  useEffect(() => {
+    setShowComments(comments);
+  }, [commentUpdated]);
+
+  const showMoreComment = () => {
+    setShowComments(totalComment);
+  };
+
   return (
     <div className="card-noti-comment-list">
-      <Button type="link" onClick={() => showComment(!isShowComment)} className="align-self-end"><span className="count-text">6 bình luận</span></Button>
+      <Button type="link" onClick={() => showComment(!isShowComment)} className="align-self-end">
+        <span className="count-text">
+          {totalComment.length}
+          {' '}
+          bình luận
+        </span>
+      </Button>
       <Divider type="horizontal" className="my-2" />
-      <CommentInput user={currentUser} />
+      <CommentInput postId={postId} user={currentUser} />
       {isShowComment ? (
         <>
-          {
-        comments.map((item) => (
-          <UserComment key={item.id} user={item.user} content={item.content} />
-        ))
-      }
-          <div className="more-comment">
+          {currentShowComments && currentShowComments.length > 0
+            && currentShowComments.map((item) => (
+              <UserComment postId={postId} id={item._id} key={item._id} posterId={item.poster} content={item.content} createdAt={item.create_at} currentUser={currentUser} />
+            ))}
+          <Button type="link" onClick={showMoreComment} className="more-comment">
             <span className="text-more">Xem thêm bình luận</span>
-            <span className="text-count">3/12</span>
-          </div>
+          </Button>
         </>
       ) : null}
     </div>
   );
 };
+const mapStateToProps = (state) => ({
+  commentUpdated: state.updateComment,
+});
 
-export default ListComment;
+export default connect(mapStateToProps)(ListComment);

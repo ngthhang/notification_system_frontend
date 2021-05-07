@@ -31,7 +31,7 @@ const chooseLabel = (type) => {
 
 const ProfileAboutDetail = ({ value, type }) => {
   const icon = chooseIcon(type);
-  const isNull = !value || value === '' || value === null || value === undefined;
+  const isNull = !value || value === '' || value === null || value === undefined || value === 'undefined';
   const labelText = chooseLabel(type);
   return (
     <div className="general-layout-row pb-3">

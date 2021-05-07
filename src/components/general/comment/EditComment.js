@@ -1,15 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button, Input, Modal, Tooltip,
 } from 'antd';
+import moment from 'moment';
 import { SendOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { connect } from 'react-redux';
+import { updateComment, deleteCommentById } from '../../../services/post.service';
+import updatePost from '../../../actions/updatePost';
 
-const EditComment = ({ content }) => {
+const EditComment = ({
+  id, content, isCurrentUser, createdAt, postId, dispatch, postUpdated,
+}) => {
   const [currentComment, editComment] = useState(content);
   const [isShowInput, showInput] = useState(false);
 
-  const postEditComment = () => {
-    console.log(currentComment);
+  useEffect(() => {
+    editComment(content);
+  },
+  [postUpdated]);
+
+  const postEditComment = async (e) => {
+    console.log(e);
+    const data = {
+      post_id: postId,
+      content: currentComment,
+      comment_id: id,
+    };
+    const res = await updateComment(data);
+    const { code } = res;
+    console.log(res);
+    if (code === 1) {
+      showInput(false);
+      dispatch(updatePost(!postUpdated));
+    }
+  };
+
+  const deleteComment = async () => {
+    const data = {
+      post_id: postId,
+      comment_id: id,
+    };
+    const res = await deleteCommentById(data);
+    console.log(res);
   };
 
   const modalConfirm = () => {
@@ -19,15 +51,26 @@ const EditComment = ({ content }) => {
       content: 'Bạn xác nhận xoá bình luận này?',
       okText: 'Đồng ý',
       cancelText: 'Huỷ',
+      onOk() {
+        deleteComment();
+      },
+      onCancel() {
+        console.log('Huỷ xoá bình luận');
+      },
     });
   };
 
   return (
-    <>
-      <div className="footer">
-        <Button type="link" className="btn-edit" onClick={() => showInput(!isShowInput)}><span>Sửa</span></Button>
-        <span className="mx-1">.</span>
-        <Button type="link" className="btn-edit" onClick={modalConfirm}><span>Xoá</span></Button>
+    <div className="general-layout w-75">
+      <div className="general-layout w-100 flex-row justify-content-start">
+        {isCurrentUser ? (
+          <div className="edit-footer">
+            <Button type="link" className="btn-edit" onClick={() => showInput(!isShowInput)}><span>Sửa</span></Button>
+            <span className="mx-1">.</span>
+            <Button type="link" className="btn-edit" onClick={modalConfirm}><span>Xoá</span></Button>
+          </div>
+        ) : null}
+        <span className="create-comment-text text-wrap mx-3 my-1">{moment(createdAt).format('DD/MM/YYYY hh:mm A')}</span>
       </div>
       {
         isShowInput ? (
@@ -39,9 +82,12 @@ const EditComment = ({ content }) => {
           null
         )
       }
-
-    </>
+    </div>
   );
 };
 
-export default EditComment;
+const mapStateToProps = (state) => ({
+  postUpdated: state.updatePost,
+});
+
+export default connect(mapStateToProps)(EditComment);
