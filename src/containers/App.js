@@ -11,6 +11,7 @@ import ProfileScreen from './ProfileScreen';
 import ListCategoriesScreen from './ListCategoriesScreen';
 import CategoriesDetail from './CategoriesDetail';
 import NotFound from './NotFound';
+import NotiDetailScreen from './NotiDetailScreen';
 
 class App extends React.Component {
   render() {
@@ -31,6 +32,7 @@ class App extends React.Component {
             <ListCategoriesScreen />
           </Route>
           <Route exact path="/categories/:aliasKey" render={(props) => <CategoriesDetail {...props} />} />
+          <Route exact path="/noti/:id" render={(props) => <NotiDetailScreen {...props} />} />
           <Route>
             <NotFound />
           </Route>

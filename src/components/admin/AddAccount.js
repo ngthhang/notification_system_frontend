@@ -5,14 +5,17 @@ import {
   Form,
   Spin,
   Input,
+  Tooltip,
   Button,
   Checkbox,
-  Tooltip,
+  notification,
+  Modal,
   Row, Col,
 } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import setDimension from '../../actions/windowDimension';
 import { getAllCategories } from '../../services/categories.service';
+import { createUser } from '../../services/user.service';
 import changeRedirect from '../../actions/redirectFaculty';
 import AdvanceHeader from '../general/AdvanceHeader';
 import Footer from '../general/Footer';
@@ -20,30 +23,73 @@ import Footer from '../general/Footer';
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const AddAccount = ({ dispatch, windowDimension }) => {
-  const [fullName, setFullName] = useState('');
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  const [checkedCate, setCheckedCate] = useState([]);
   dispatch(changeRedirect('create-account'));
+  const [initPassword, setPassword] = useState(generator.generate({
+    length: 10,
+    numbers: true,
+  }));
+  const [form] = Form.useForm();
   const [categories, setCate] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const onChange = (checkedValues) => {
-    setCheckedCate(checkedValues);
+    console.log(checkedValues);
   };
 
-  const onFinish = (values) => {
-    console.log(values);
-    const data = {
-      category_id: checkedCate,
-      username: userName,
-      role: 'Faculty',
-      name: fullName,
-      avatar: null,
-      password,
-    };
+  const openCopySuccess = (type) => {
+    notification[type]({
+      message: 'Copy to clipboard',
+      placement: 'bottomRight',
+    });
+  };
 
-    console.log(data);
+  const copyClipboard = (password) => {
+    navigator.clipboard.writeText(password);
+    openCopySuccess('success');
+  };
+
+  const createSuccess = (username, password) => {
+    Modal.success({
+      title: 'Tạo tài khoản thành công',
+      content: (
+        <div className="w-100 my-5">
+          <p>
+            Tên đăng nhập:
+            {' '}
+            <Button className="w-100" onClick={() => copyClipboard(username)}>{username}</Button>
+          </p>
+          <p>
+            Mật khẩu:
+            {' '}
+            <Button className="w-100" onClick={() => copyClipboard(password)}>{password}</Button>
+          </p>
+        </div>
+      ),
+    });
+  };
+
+  const createFail = (m) => {
+    Modal.error({
+      title: 'Tạo tài khoản thất bại',
+      content: m,
+    });
+  };
+
+  const onFinish = async (values) => {
+    values.password = initPassword;
+    values.role = 'Faculty';
+    console.log(values);
+    const res = await createUser(values);
+    const { code } = res;
+    if (code === 0) {
+      return createFail(res.message);
+    }
+    form.resetFields();
+    setPassword(generator.generate({
+      length: 10,
+      numbers: true,
+    }));
+    return createSuccess(values.username, values.password);
   };
 
   const updateDimensions = () => {
@@ -55,10 +101,6 @@ const AddAccount = ({ dispatch, windowDimension }) => {
     setCate(res);
     window.addEventListener('resize', updateDimensions);
     setLoading(false);
-    setPassword(generator.generate({
-      length: 10,
-      numbers: true,
-    }));
     return (() => {
       window.removeEventListener('resize', updateDimensions);
     });
@@ -83,6 +125,7 @@ const AddAccount = ({ dispatch, windowDimension }) => {
         <div className="col-xl-9 col-xxl-9 col-lg-9 col-md-11 col-sm-11 col-11 align-items-center justify-content-center bg-white card-add-account p-3">
           <span className="header-text align-self-center pt-4">TẠO TÀI KHOẢN</span>
           <Form
+            form={form}
             className="py-3 add-account-form"
             labelCol={{ span: width < 1300 ? 24 : 6 }}
             wrapperCol={{ span: width < 1300 ? 24 : 12 }}
@@ -91,7 +134,7 @@ const AddAccount = ({ dispatch, windowDimension }) => {
             onFinish={onFinish}
           >
             <Form.Item
-              name="fullname"
+              name="name"
               label="Họ tên"
               rules={[
                 {
@@ -100,11 +143,11 @@ const AddAccount = ({ dispatch, windowDimension }) => {
                 },
               ]}
             >
-              <Input onChange={(e) => setFullName(e.target.value)} />
+              <Input />
             </Form.Item>
             <Form.Item
               name="username"
-              label="Username"
+              label="Tên đăng nhập"
               rules={[
                 {
                   required: true,
@@ -112,17 +155,25 @@ const AddAccount = ({ dispatch, windowDimension }) => {
                 },
               ]}
             >
-              <Input onChange={(e) => setUserName(e.target.value)} />
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="role"
+              label="Quyền tài khoản"
+            >
+              <Input disabled defaultValue="Phòng / Khoa" />
             </Form.Item>
             <Tooltip title="Mật khẩu được tạo tự động">
               <Form.Item
+                initvalues={initPassword}
+                name="password"
                 label="Mật khẩu"
               >
-                <Input onChange={(e) => setPassword(e.target.value)} value={password} disabled />
+                <Input defaultValue={initPassword} disabled />
               </Form.Item>
             </Tooltip>
             <Form.Item
-              name="topic"
+              name="category_id"
               label="Chọn chuyên mục đăng bài"
               rules={[
                 {

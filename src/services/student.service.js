@@ -7,6 +7,8 @@ export const studentLogin = async (token) => {
 };
 
 export const findStudentByUserId = async (userId) => {
+  const token = localStorage.getItem('token');
+
   try {
     const res = await axios.get(`student/user_id/${userId}`, {
       headers: {
@@ -55,8 +57,21 @@ export const findStudent = async (studentId) => {
 export const updateStudent = async (data, studentId) => {
   const token = localStorage.getItem('token');
   const bodyFormData = new FormData();
-  bodyFormData.append('faculty_name', data.faculty_name);
-  bodyFormData.append('class_name', data.class_name);
+  console.log(data);
+  switch (data.editBoth) {
+    case 0:
+      bodyFormData.append('class_name', data.class_name);
+      break;
+    case 1:
+      bodyFormData.append('faculty_name', data.faculty_name);
+      break;
+    case 2:
+      bodyFormData.append('faculty_name', data.faculty_name);
+      bodyFormData.append('class_name', data.class_name);
+      break;
+    default:
+      break;
+  }
 
   if (data.avatar !== null && data.avatar !== '') {
     bodyFormData.append('attachment', data.avatar);
@@ -77,8 +92,7 @@ export const updateStudent = async (data, studentId) => {
     if (code === 13) {
       logOut();
     }
-    const { student } = res.data;
-    return student;
+    return res.data;
   } catch (e) {
     console.log(e.message);
     return { code: 0, message: 'Lấy thông tin thất bại' };

@@ -7,24 +7,24 @@ import { findCategoryByAliasKey } from '../../services/categories.service';
 import ProfileHeader from '../general/profile/ProfileHeader';
 import CardNotiCate from './CardNotiCate';
 import CardNotiLoading from './CardNotiLoading';
-import changeRedirect from '../../actions/redirectFaculty';
 import AdvanceHeader from '../general/AdvanceHeader';
 import Footer from '../general/Footer';
 
-const ListNotiCategoriesDetail = ({ notiUpdated, aliasKey, dispatch }) => {
+const ListNotiCategoriesDetail = ({
+  notiUpdated, aliasKey,
+}) => {
   const [loading, setLoading] = useState(true);
   const [cate, setCate] = useState({});
   const [hasMore, setHasMore] = useState(true);
   const [redirect, setRedirect] = useState(false);
   // const [currentPage, setPage] = useState(1);
   const [notiList, setList] = useState([]);
-
   useEffect(async () => {
-    dispatch(changeRedirect('categories-detail'));
     const resCate = await findCategoryByAliasKey(aliasKey);
     const res = await getNotiByCategory(resCate._id, 1);
     if (res.length > 0) {
       setList(res);
+      console.log(res);
     } else {
       setHasMore(false);
     }
@@ -47,8 +47,10 @@ const ListNotiCategoriesDetail = ({ notiUpdated, aliasKey, dispatch }) => {
         <AdvanceHeader />
         <div className="general-layout justify-content-start w-100 h-100">
           <ProfileHeader name={cate.name} position="Phòng / Khoa" avatar="" />
-          <span className="my-4">Không có thông báo hiển thị</span>
-          <Button onClick={routeHome} type="primary" size="large">Quay về trang chủ</Button>
+          <div className="w-100 general-layout h-100">
+            <span className="my-4">Không có thông báo hiển thị</span>
+            <Button onClick={routeHome} type="primary" size="large">Quay về trang chủ</Button>
+          </div>
         </div>
         <Footer />
       </div>
@@ -61,6 +63,7 @@ const ListNotiCategoriesDetail = ({ notiUpdated, aliasKey, dispatch }) => {
         <ProfileHeader name={cate.name} position="Phòng / Khoa" avatar="" />
         {loading ? (
           <div className="w-90 my-4">
+            <CardNotiLoading />
             <CardNotiLoading />
             <CardNotiLoading />
           </div>

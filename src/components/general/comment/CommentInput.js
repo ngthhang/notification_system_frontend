@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
-import { Avatar, Input, Button } from 'antd';
+import {
+  Avatar, Input, Button, notification,
+} from 'antd';
 import { UserOutlined, SendOutlined } from '@ant-design/icons';
 import { createComment } from '../../../services/post.service';
 import updatePost from '../../../actions/updatePost';
@@ -28,15 +30,26 @@ const CommentInput = ({
     inputRef.current.state.value = '';
   };
 
+  const showStatus = (type, m) => {
+    notification[type]({
+      message: m,
+      placement: 'bottomRight',
+    });
+  };
+
   const postComment = async () => {
     const data = {
       post_id: postId,
       content: comment,
     };
     const res = await createComment(data);
-    console.log(res);
     clearInput();
-    dispatch(updatePost(!postUpdated));
+    if (res.code === 1) {
+      showStatus('success', 'Bình luận thành công');
+      dispatch(updatePost(!postUpdated));
+    } else {
+      showStatus('error', 'Bình luận thất bại');
+    }
   };
 
   return (

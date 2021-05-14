@@ -39,7 +39,7 @@ const ProfileAboutDetail = ({ value, type }) => {
       <div className="general-layout align-items-start mx-3">
         {labelText}
         {isNull ? (
-          <span className="text-update">Thêm thông tin chi tiết</span>
+          <span className="text-update">Chưa có thông tin</span>
         ) : (
           <span className="user-name">{value}</span>
         )}

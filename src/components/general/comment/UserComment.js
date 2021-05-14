@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Button } from 'antd';
-// import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import EditComment from './EditComment';
@@ -20,8 +20,6 @@ const UserComment = ({
   const [studentId, setStudentId] = useState('');
   const isCurrentUser = user._id === currentUser._id;
   useEffect(async () => {
-    console.log('posterid');
-    console.log(posterId);
     const res = await getUser(posterId);
     setUser(res);
     if (res.avatar) {
@@ -46,8 +44,7 @@ const UserComment = ({
   };
 
   if (redirect && role === 'Student') {
-    const temp = 'http://localhost:3000/profile/student/';
-    window.location.href = temp + studentId;
+    return <Redirect to={`/profile/student/${studentId}`} />;
   }
 
   if (loading) {
@@ -78,6 +75,7 @@ const UserComment = ({
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  redirectFaculty: state.redirectFaculty,
 });
 
 export default connect(mapStateToProps)(UserComment);

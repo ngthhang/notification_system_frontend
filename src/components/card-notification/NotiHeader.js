@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Avatar, Button, Dropdown, Menu, Modal, Upload, Input, message,
 } from 'antd';
+import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import {
@@ -149,8 +150,7 @@ const NotiHeader = ({
   };
 
   if (redirect) {
-    const temp = 'http://localhost:3000/profile/student/';
-    window.location.href = temp + poster.student_id;
+    return <Redirect to={`/profile/student/${poster.student_id}`} />;
   }
 
   return (
@@ -212,6 +212,7 @@ const NotiHeader = ({
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  redirectFaculty: state.redirectFaculty,
 });
 
 export default connect(mapStateToProps)(NotiHeader);

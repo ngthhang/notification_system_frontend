@@ -8,6 +8,14 @@ html, body, #root{
   overflow-x: hidden;
 }
 
+.ant-tabs-content-holder{
+  width: 100%;
+}
+
+.ant-card-head-title{
+  font-weight: bold;
+}
+
 .general-screen{
   display: flex;
   flex-direction: column;

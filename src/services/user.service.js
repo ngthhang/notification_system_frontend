@@ -19,10 +19,6 @@ export const login = async (data) => {
   }
 };
 
-export const getInfo = () => {
-  console.log('hello');
-};
-
 export const getUser = async (id) => {
   const token = localStorage.getItem('token');
 
@@ -40,10 +36,7 @@ export const getUser = async (id) => {
       logOut();
     }
     const { user } = res.data;
-    console.log('user search');
-    console.log(user);
     if (user.role === 'Student') {
-      console.log(getPosterById(user._id));
       return getPosterById(user._id);
     }
     return res.data.user;
@@ -93,10 +86,32 @@ export const createUser = async (data) => {
     } if (code === 13) {
       logOut();
     }
-    const { user } = res.data;
-    return user;
+    return res.data;
   } catch (e) {
     console.log(e.message);
     return { code: 0, message: 'Lấy thông tin thất bại' };
+  }
+};
+
+export const changePassword = async (data) => {
+  const token = localStorage.getItem('token');
+
+  try {
+    const res = await axios.post('user/change_password', data, {
+      headers: {
+        Authorization: `Bearer ${token}`, // the token is a variable which holds the token
+      },
+    });
+
+    const { code } = res.data;
+    if (code === 0) {
+      return { code: 0, message: res.data.message };
+    } if (code === 13) {
+      logOut();
+    }
+    return res.data;
+  } catch (e) {
+    console.log(e.message);
+    return { code: 0, message: 'Thay đổi mật khẩu thất bại' };
   }
 };

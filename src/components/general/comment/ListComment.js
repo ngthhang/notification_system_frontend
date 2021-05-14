@@ -22,7 +22,7 @@ const ListComment = ({
     <div className="card-noti-comment-list">
       <Button type="link" onClick={() => showComment(!isShowComment)} className="align-self-end">
         <span className="count-text">
-          {totalComment.length}
+          {totalComment.length !== undefined ? totalComment.length : 0}
           {' '}
           bình luận
         </span>

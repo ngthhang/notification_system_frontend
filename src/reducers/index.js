@@ -10,12 +10,14 @@ import updatePost from './updatePost';
 import updateComment from './updateComment';
 import updateList from './updateList';
 import updateNoti from './updateNoti';
+import updateEdit from './updateEdit';
 
 export default combineReducers({
   count,
   redirectLogin,
   updateNoti,
   logoImg,
+  updateEdit,
   windowDimension,
   redirectFaculty,
   currentUser,

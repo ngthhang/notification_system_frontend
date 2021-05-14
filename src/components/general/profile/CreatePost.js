@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-  Modal, Avatar, Input, Button, Upload, message,
+  Modal, Avatar, Input, Button, Upload, notification,
 } from 'antd';
 import {
   UserOutlined, PlusOutlined, VideoCameraFilled,
@@ -27,6 +27,13 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
     }
   });
 
+  const showStatus = (type, message) => {
+    notification[type]({
+      message,
+      placement: 'bottomRight',
+    });
+  };
+
   const addVideo = (e) => {
     const url = e.target.value;
     setVideo(url);
@@ -45,16 +52,22 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
       if (match && match[2].length === 11) {
         data.video = video;
       } else {
-        message.error('Url video không hợp lệ');
+        showStatus('error', 'Url video không hợp lệ');
         setVideo('');
         return;
       }
     }
-    // console.log(data);
     const res = await createPost(data);
-    console.log('response');
-    console.log(res);
+    const { code, message } = res;
+    if (code === 1) {
+      showStatus('success', message);
+    } else {
+      showStatus('error', message);
+    }
     setIsModalVisible(false);
+    setContent('');
+    setVideo('');
+    setFile([]);
     dispatch(updatePost(!postUpdated));
   };
 
@@ -107,7 +120,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
         onCancel={handleCancel}
       >
         <span className="user-name pt-3 pb-2">Nội dung</span>
-        <TextArea row="7" onChange={(e) => setContent(e.target.value)} className="w-100 p-2 textarea-text" placeholder="Nhập nội dung bài viết" />
+        <TextArea row="7" onChange={(e) => setContent(e.target.value)} defaultValue={content} className="w-100 p-2 textarea-text" placeholder="Nhập nội dung bài viết" />
         {isShowVideo ? (
           <>
             <span className="user-name pt-3 pb-2">Video URL</span>

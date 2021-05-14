@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-  Modal, Avatar, Input, Button, Upload, message, Select,
+  Modal, Avatar, Input, Button, Upload, message, Select, notification,
 } from 'antd';
 import {
   UserOutlined, PlusOutlined, VideoCameraFilled,
 } from '@ant-design/icons';
 import updatePost from '../../actions/updatePost';
+import updateNoti from '../../actions/updateNoti';
 import { createPost } from '../../services/post.service';
+import { createNoti } from '../../services/notification.service';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const CreatePost = ({ user, postUpdated, dispatch }) => {
+const CreatePost = ({
+  user, postUpdated, dispatch, notiUpdated,
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isShowVideo, setShowVideo] = useState(false);
   const [currentFile, setFile] = useState([]);
@@ -21,20 +25,32 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
   const [video, setVideo] = useState('');
   const role = localStorage.getItem('role');
   const isStudent = role === 'student';
+  const [userCate, setUserCate] = useState([]);
+  const [currentCate, setCurrentCate] = useState('');
+  const [header, setHeader] = useState('');
 
-  useEffect(() => {
+  useEffect(async () => {
     if (isStudent) {
       if (user.avatar.includes('public')) {
         setUserAva(`https://witty-ruby-lace.glitch.me/${user.avatar}`);
       } else {
         setUserAva(user.avatar);
       }
+    } else {
+      setUserCate(user.category_id);
     }
-  });
+  }, []);
 
   const addVideo = (e) => {
     const url = e.target.value;
     setVideo(url);
+  };
+
+  const showStatusCreate = (type, m) => {
+    notification[type]({
+      message: m,
+      placement: 'bottomRight',
+    });
   };
 
   const handleCreatePost = async () => {
@@ -55,16 +71,43 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
         return;
       }
     }
-    // console.log(data);
     const res = await createPost(data);
-    console.log('response');
     console.log(res);
+    if (res.code === 1) {
+      showStatusCreate('success', 'Tạo bài viết mới thành công');
+    } else {
+      showStatusCreate('fail', 'Tạo bài viết mới thất bại');
+    }
     setIsModalVisible(false);
     dispatch(updatePost(!postUpdated));
   };
 
+  const handleCreateNoti = async () => {
+    const { _id } = user;
+    const data = {
+      poster: _id,
+      attachment: currentFile,
+      category_id: currentCate,
+      content,
+      header,
+    };
+    console.log(data);
+    const res = await createNoti(data);
+    console.log(res);
+    if (res.code === 1) {
+      showStatusCreate('success', 'Tạo thông báo mới thành công');
+    } else {
+      showStatusCreate('fail', 'Tạo thông báo mới thất bại');
+    }
+    setIsModalVisible(false);
+    dispatch(updateNoti(!notiUpdated));
+  };
+
   const handleOk = () => {
-    handleCreatePost();
+    if (isStudent) {
+      return handleCreatePost();
+    }
+    return handleCreateNoti();
   };
 
   const handleCancel = () => {
@@ -91,19 +134,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
   };
 
   const onChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-
-  const onBlur = () => {
-    console.log('blur');
-  };
-
-  const onFocus = () => {
-    console.log('focus');
-  };
-
-  const onSearch = (val) => {
-    console.log('search:', val);
+    setCurrentCate(value);
   };
 
   return (
@@ -126,6 +157,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
         }}
         visible={isModalVisible}
         onOk={handleOk}
+        closable
         onCancel={handleCancel}
       >
         {
@@ -140,18 +172,14 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
                 placeholder="Chọn chuyên mục để đăng bài"
                 optionFilterProp="children"
                 onChange={onChange}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                onSearch={onSearch}
                 filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
               >
-                <Option value="CNTT" className="textarea-text">Khoa Công nghệ thông tin</Option>
-                <Option value="QTKD" className="textarea-text">Khoa Quản trị kinh doanh</Option>
-                <Option value="CTSV" className="textarea-text">Phòng công tác sinh viên</Option>
+                {userCate.length > 0 && userCate.map((item) => (
+                  <Option key={item._id} value={item._id} className="textarea-text">{item.name}</Option>
+                ))}
               </Select>
               <span className="user-name pt-3 pb-2">Tiêu đề</span>
-              <Input className="textarea-text" placeholder="Nhập tiêu đề thông báo" />
-
+              <Input className="textarea-text" onChange={(e) => setHeader(e.target.value)} placeholder="Nhập tiêu đề thông báo" />
             </>
           ) : null
       }
@@ -175,9 +203,11 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
             </div>
           </Upload>
         </div>
-        <div className="general-layout-row justify-content-around w-100 pt-3">
-          <Button onClick={() => setShowVideo(!isShowVideo)} className="w-100 btn-create-post" icon={<VideoCameraFilled size="large" style={{ color: '#dc3545' }} />}>Thêm video</Button>
-        </div>
+        {isStudent ? (
+          <div className="general-layout-row justify-content-around w-100 pt-3">
+            <Button onClick={() => setShowVideo(!isShowVideo)} className="w-100 btn-create-post" icon={<VideoCameraFilled size="large" style={{ color: '#dc3545' }} />}>Thêm video</Button>
+          </div>
+        ) : null}
       </Modal>
     </div>
   );
@@ -185,6 +215,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  notiUpdated: state.updateNoti,
 });
 
 export default connect(mapStateToProps)(CreatePost);

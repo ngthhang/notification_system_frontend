@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, message } from 'antd';
 import { Redirect } from 'react-router-dom';
+import { Row, Col, message } from 'antd';
 import ProfileHeader from './ProfileHeader';
 import ProfileAbout from './ProfileAbout';
 import changeRedirect from '../../../actions/redirectFaculty';
@@ -68,7 +68,7 @@ const Profile = ({
     console.log(posts);
     await dispatch(updateList(!listUpdate));
     return null;
-  }, [postUpdated]);
+  }, [postUpdated, id]);
 
   if (redirect) {
     return <Redirect to="/" />;

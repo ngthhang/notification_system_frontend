@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import { message } from 'antd';
+import { notification } from 'antd';
 import { Redirect } from 'react-router-dom';
 import { studentLogin } from '../services/student.service';
 
 const GoogleLoginButton = () => {
   const [redirect, enableRedirect] = useState(false);
 
+  const showStatus = (type, message) => {
+    notification[type]({
+      message,
+      placement: 'bottomRight',
+    });
+  };
+
   const responseGoogle = async (response) => {
     const { tokenId, profileObj } = response;
     const { email } = profileObj;
     const isValid = email.includes('@student.tdtu.edu.vn');
     if (!isValid) {
-      message.error('Email không hợp lệ');
+      showStatus('error', 'Email không hợp lệ');
       return;
     }
 
@@ -20,18 +27,19 @@ const GoogleLoginButton = () => {
       const res = await studentLogin({ token: tokenId });
       const { code } = res.data;
       if (code === 0) {
-        message.error(res.data.message);
+        showStatus('error', res.data.message);
         return;
       }
       const { token, user } = res.data;
       const { student_id } = user;
-      await message.success('Đăng nhập thành công');
+      showStatus('success', 'Đăng nhập thành công');
       localStorage.setItem('token', token);
       localStorage.setItem('user', student_id);
       localStorage.setItem('role', 'student');
       enableRedirect(true);
     } catch (e) {
       console.log(e);
+      showStatus('error', 'Đăng nhập thất bại');
     }
   };
 

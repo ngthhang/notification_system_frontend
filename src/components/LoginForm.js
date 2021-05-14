@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Form, Input, Button, Divider, message,
+  Form, Input, Button, Divider, notification,
 } from 'antd';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -15,6 +15,13 @@ const getImg = () => {
   const tmp = require('../assets/images/logo.png');
   return tmp.default;
 };
+
+const showStatus = (type, message) => {
+  notification[type]({
+    message,
+    placement: 'bottomRight',
+  });
+};
 const LoginForm = () => {
   const [redirect, enableRedirect] = useState(false);
 
@@ -27,18 +34,18 @@ const LoginForm = () => {
       const dataMessage = res.data.message;
       if (code === 0) {
         console.log('hello');
-        return message.error(dataMessage);
+        return showStatus('error', dataMessage);
       }
       const { user, token } = res.data;
       const { _id, role } = user;
-      message.success('Đăng nhập thành công');
+      showStatus('success', 'Đăng nhập thành công');
       localStorage.setItem('token', token);
       localStorage.setItem('user', _id);
       localStorage.setItem('role', role.toLowerCase());
       enableRedirect(true);
     } catch (e) {
-      const m = e.message;
-      message.error(m);
+      // const m = e.message;
+      showStatus('error', 'Đăng nhập thất bại');
     }
     return 0;
   };

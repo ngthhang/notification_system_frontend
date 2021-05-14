@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Button, Input, Modal, Tooltip,
+  Button, Input, Modal, Tooltip, notification,
 } from 'antd';
 import moment from 'moment';
 import { SendOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -19,6 +19,13 @@ const EditComment = ({
   },
   [postUpdated]);
 
+  const showStatus = (type, m) => {
+    notification[type]({
+      message: m,
+      placement: 'bottomRight',
+    });
+  };
+
   const postEditComment = async () => {
     const data = {
       post_id: postId,
@@ -26,11 +33,12 @@ const EditComment = ({
       comment_id: id,
     };
     const res = await updateComment(data);
-    const { code } = res;
-    console.log(res);
-    if (code === 1) {
+    if (res.code === 1) {
       showInput(false);
+      showStatus('success', res.message);
       dispatch(updatePost(!postUpdated));
+    } else {
+      showStatus('error', res.message);
     }
   };
 
@@ -40,8 +48,12 @@ const EditComment = ({
       comment_id: id,
     };
     const res = await deleteCommentById(data);
-    console.log(res);
-    dispatch(updatePost(!postUpdated));
+    if (res.code === 1) {
+      dispatch(updatePost(!postUpdated));
+      showStatus('success', res.message);
+    } else {
+      showStatus('error', res.message);
+    }
   };
 
   const modalConfirm = () => {

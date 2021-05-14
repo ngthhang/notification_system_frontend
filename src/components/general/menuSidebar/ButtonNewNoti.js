@@ -19,7 +19,7 @@ const ButtonNewNoti = ({ post }) => {
     name = category.name;
   }
   if (redirect) {
-    return <Redirect to={`/notify/${_id}`} />;
+    return <Redirect to={`/noti/${_id}`} />;
   }
 
   setTimeout(() => {
@@ -27,7 +27,7 @@ const ButtonNewNoti = ({ post }) => {
   }, 2000);
 
   if (loading) {
-    return <Skeleton active paragraphs={{ rows: 2 }} />;
+    return <Skeleton className="w-100" active paragraphs={{ rows: 1 }} />;
   }
 
   const redirectNotifyDetail = () => {
@@ -52,7 +52,11 @@ const ButtonNewNoti = ({ post }) => {
             {header}
           </span>
         </div>
-        <span className="content-noti-text">{content}</span>
+        <span className="content-noti-text">
+          {content.slice(0, 100)}
+          {' '}
+          ...
+        </span>
       </div>
     </Button>
   );

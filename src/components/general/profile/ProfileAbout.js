@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Row, Col, Divider, Button, Modal, Input, Upload,
+  Row, Col, Divider, Button, Modal, Input, Upload, notification,
 } from 'antd';
 import { connect } from 'react-redux';
 import { UploadOutlined } from '@ant-design/icons';
 import { updateStudent } from '../../../services/student.service';
 import ProfileListDetail from './ProfileListDetail';
 import ProfileListPost from './ProfileListPost';
+import updatePost from '../../../actions/updatePost';
 
 const ProfileAbout = ({
-  user, postList, postUpdated, currentUser,
+  user, postList, postUpdated, currentUser, dispatch,
 }) => {
   const [isModalVisible, showModal] = useState(false);
   const [faculty, changeFaculty] = useState('');
@@ -23,31 +24,61 @@ const ProfileAbout = ({
     changeClass(user.class_name);
   }, [postUpdated]);
 
+  const showStatus = (type, message) => {
+    notification[type]({
+      message,
+      placement: 'bottomRight',
+    });
+  };
+
   const handleOk = async () => {
     let data;
-    const isEditFaculty = faculty === undefined || faculty === 'undefined';
-    const isEditClass = studentClass === undefined || studentClass === 'undefined';
-    if (isEditFaculty) {
+    const notEditFaculty = faculty === undefined || faculty === 'undefined';
+    const notEditClass = studentClass === undefined || studentClass === 'undefined';
+
+    // faculty undefined
+    if (notEditFaculty && !notEditClass) {
+      console.log('class');
       data = {
+        editBoth: 0,
         class_name: studentClass,
         avatar: currentFile,
       };
     }
-    if (isEditClass) {
+
+    // class undefined
+    if (notEditClass && !notEditFaculty) {
+      console.log('faculty');
       data = {
+        editBoth: 1,
         faculty_name: faculty,
         avatar: currentFile,
       };
     }
 
-    if (!isEditFaculty && !isEditClass) {
+    if (!notEditFaculty && !notEditClass) {
+      console.log('object');
       data = {
+        editBoth: 2,
         class_name: studentClass,
         faculty_name: faculty,
         avatar: currentFile,
       };
+    } else {
+      data = {
+        editBoth: 3,
+        avatar: currentFile,
+      };
     }
-    await updateStudent(data, user.student_id);
+    const res = await updateStudent(data, user.student_id);
+    dispatch(updatePost(!postUpdated));
+    const { code, message } = res;
+    console.log(res.student);
+    if (code === 1) {
+      showStatus('success', message);
+    } else {
+      showStatus('error', message);
+    }
     showModal(false);
   };
 

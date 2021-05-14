@@ -1,16 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ListNotiCategoriesDetail from '../components/categories/ListNotiCategoriesDetail';
+import changeRedirect from '../actions/redirectFaculty';
 
-const CategoriesDetail = ({ match }) => {
+const CategoriesDetail = ({ match, dispatch }) => {
   const { aliasKey } = match.params;
+  dispatch(changeRedirect('categories-detail'));
   return (
     <ListNotiCategoriesDetail aliasKey={aliasKey} />
   );
 };
 
-const mapStateToProps = (state) => ({
-  redirectFaculty: state.redirectFaculty,
-});
-
-export default connect(mapStateToProps)(CategoriesDetail);
+export default connect()(CategoriesDetail);

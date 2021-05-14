@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import {
-  Card, Button, Dropdown, Menu, Input, Modal, Upload,
+  Card, Button, Dropdown, Menu, Input, Modal, Upload, notification,
 } from 'antd';
 import {
   EllipsisOutlined, ExclamationCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined,
@@ -10,26 +11,50 @@ import {
 import { updateNoti, deleteNoti } from '../../services/notification.service';
 import { getUser } from '../../services/user.service';
 import updateNotifi from '../../actions/updateNoti';
+import CardNotiImageGroup from './CardNotiImageGroup';
 
 const { TextArea } = Input;
-const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
+const CardNotiCate = ({
+  notiUpdated, dispatch, item, redirectFaculty, editUpdated,
+}) => {
   let images = item.files_url;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [header, setHeader] = useState(item.header);
-  const [content, setContent] = useState(item.content);
-  const [editor, setEditor] = useState({});
-
-  useEffect(async () => {
-    const data = await getUser(item.poster);
-    setEditor(data);
-  }, []);
+  const imageFile = [];
 
   if (images === undefined) {
     images = [];
+  } else {
+    images.map((i) => imageFile.push({
+      uid: images.indexOf(i),
+      name: 'image.png',
+      status: 'done',
+      url: `https://witty-ruby-lace.glitch.me/${i}`,
+    }));
+    console.log(imageFile);
   }
-  const [currentFile, setFile] = useState(images);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [header, setHeader] = useState(item.header);
+  const [content, setContent] = useState(item.content);
+  const [redirect, setRedirect] = useState(false);
+  const [editor, setEditor] = useState({});
+  const [currentFile, setFile] = useState(imageFile);
+
+  useEffect(async () => {
+    setHeader(item.header);
+    setContent(item.content);
+    setFile(imageFile);
+    const data = await getUser(item.poster);
+    setEditor(data);
+  }, [editUpdated]);
+
   const currentUserId = localStorage.getItem('user');
   const isCurrentUser = currentUserId === item.poster;
+
+  const showStatus = (type, m) => {
+    notification[type]({
+      message: m,
+      placement: 'bottomRight',
+    });
+  };
 
   const deleteNotify = async () => {
     const data = {
@@ -38,7 +63,15 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
     };
     const res = await deleteNoti(data);
     console.log(res);
-    dispatch(updateNotifi(!notiUpdated));
+    if (res.code === 1) {
+      showStatus('success', 'Sửa thông báo thành công');
+      dispatch(updateNotifi(!notiUpdated));
+    } else {
+      showStatus('error', 'Sửa thông báo thất bại');
+    }
+    if (redirectFaculty === 'noti-detail') {
+      setRedirect(true);
+    }
   };
 
   const showModal = () => {
@@ -46,18 +79,25 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
   };
 
   const handleEditNotify = async () => {
+    const { _id } = item.category;
     const data = {
       header,
       content,
       attachment: currentFile,
       notify_id: item._id,
+      category: _id,
     };
     console.log(data);
     const res = await updateNoti(data);
+    if (res.code === 1) {
+      showStatus('success', 'Sửa thông báo thành công');
+      dispatch(updateNotifi(!notiUpdated));
+    } else {
+      showStatus('error', 'Sửa thông báo thất bại');
+    }
     console.log(res);
     setIsModalVisible(false);
     setFile([]);
-    dispatch(updateNotifi(!notiUpdated));
   };
 
   const handleOk = () => {
@@ -113,7 +153,6 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
       setFile([...currentFile, file]);
       return false;
     },
-    currentFile,
   };
 
   const menu = (
@@ -133,13 +172,17 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
     </Menu>
   );
 
+  if (redirect) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <Card
       title={item.header}
       className="w-100 card-noti-cate"
     >
       <div className="w-100 general-layout align-items-start">
-        <div className="w-100 general-layout-row align-itemsm-center justify-content-between">
+        <div className="w-100 general-layout-row align-itemsm-center justify-content-between mb-2">
           <span className="text-wrap text-content">{item.content}</span>
           {isCurrentUser ? (
             <Dropdown overlay={menu} placement="bottomRight" trigger="click" className="align-self-start">
@@ -147,7 +190,15 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
             </Dropdown>
           ) : null}
         </div>
+        {images && images.length > 0 ? (
+          <CardNotiImageGroup images={images} id={item._id} />
+        ) : null}
         <span className="text-time mt-2 align-self-end">
+          Phòng ban:
+          {' '}
+          {item.category && item.category.name}
+        </span>
+        <span className="text-time align-self-end">
           Người phụ trách:
           {' '}
           {editor.name}
@@ -177,12 +228,13 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
         <span className="user-name pt-3 pb-2">Tiêu đề</span>
         <Input className="textarea-text" onChange={(e) => setHeader(e.target.value)} defaultValue={header} placeholder="Nhập tiêu đề thông báo" />
         <span className="user-name pt-3 pb-2">Nội dung</span>
-        <TextArea row="7" onChange={(e) => setContent(e.target.value)} className="w-100 p-2 textarea-text" defaultValue={content} placeholder="Nhập nội dung bài viết" />
+        <TextArea row="7" onChange={(e) => setContent(e.target.value)} className="w-100 p-2 textarea-text" defaultValue={content} placeholder="Nhập nội dung thông báo" />
         <span className="user-name pt-3 pb-2">Hình ảnh đính kèm</span>
         <div className="general-layout-row justify-content-start flex-wrap w-100">
           <Upload
             {...props}
             listType="picture-card"
+            fileList={currentFile.length > 0 ? currentFile : null}
           >
             <div>
               <PlusOutlined />
@@ -197,6 +249,8 @@ const CardNotiCate = ({ notiUpdated, dispatch, item }) => {
 
 const mapStateToProps = (state) => ({
   notiUpdated: state.updateNoti,
+  editUpdated: state.updateEdit,
+  redirectFaculty: state.redirectFaculty,
 });
 
 export default connect(mapStateToProps)(CardNotiCate);

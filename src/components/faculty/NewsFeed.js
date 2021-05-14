@@ -1,52 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { message } from 'antd';
-import InfiniteScroll from 'react-infinite-scroller';
+import { Spin } from 'antd';
 import { connect } from 'react-redux';
+import { LoadingOutlined } from '@ant-design/icons';
 import CreatePost from './CreatePost';
 import ListPost from '../general/profile/ListPost';
 import { getAllPostByPage } from '../../services/post.service';
 import updateList from '../../actions/updateList';
+
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const NewsFeed = ({
   postUpdated, currentUser, listUpdate, dispatch,
 }) => {
   const role = localStorage.getItem('role');
   const [loadingCreate, setLoadingCreate] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [postList, setPostList] = useState(true);
-  const [currentPage, setPage] = useState(1);
+  const [postList, setPostList] = useState([]);
+  const currentPage = 1;
+  // const [currentPage, setPage] = useState(1);
+  // const nodeRoot = document.getElementById('root');
+  // const [referenceNode, setReferenceNode] = useState();
 
-  const checkScroll = () => {
-    window.onscroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-        console.log('eee');
-      }
-    };
-  };
+  // const handleScroll = (event) => {
+  //   const node = event.target;
+  //   const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
+  //   if (bottom) {
+  //     console.log('BOTTOM REACHED');
+  //     console.log(currentPage);
+  //     console.log(postList);
+  //   }
+  // };
+
+  // const paneDidMount = (node) => {
+  //   if (node && postList.length > 0) {
+  //     node.addEventListener('scroll', handleScroll);
+  //     setReferenceNode(node);
+  //   }
+  // };
 
   useEffect(async () => {
     const posts = await getAllPostByPage(currentPage);
-    setPostList(posts);
-    setLoadingCreate(false);
-    setLoading(false);
-    checkScroll();
-    await dispatch(updateList(!listUpdate));
-  }, [postUpdated]);
-
-  const handleInfiniteOnLoad = async () => {
-    setLoading(true);
-    setPage(currentPage + 1);
-    const res = await getAllPostByPage(currentPage);
-    if (res.length <= 0) {
-      message.warning('Infinite List loaded all');
-      setLoading(false);
+    console.log(`posts at page: ${currentPage}`);
+    console.log(posts);
+    if (posts.length > 0) {
+      // setPostList(postList.concat(posts));
+      setPostList(posts);
+    } else {
+      // paneDidMount(nodeRoot);
       setHasMore(false);
-      return;
     }
-    setPostList(postList.concat(res));
-    setLoading(false);
-  };
+    setLoadingCreate(false);
+    await dispatch(updateList(!listUpdate));
+    return () => referenceNode.removeEventListener('scroll', handleScroll);
+  }, [postUpdated]);
 
   if (!loadingCreate) {
     return (
@@ -54,21 +60,22 @@ const NewsFeed = ({
         {
           role !== 'admin' ? (<CreatePost user={currentUser} />) : null
         }
-        <div className="w-90 scroll-content">
-          <InfiniteScroll
-            initialLoad={false}
-            pageStart={0}
-            loadMore={handleInfiniteOnLoad}
-            hasMore={!loading && hasMore}
-            useWindow
-          >
-            <ListPost postList={postList} currentUser={currentUser} />
-          </InfiniteScroll>
+        <div className="w-90">
+          <ListPost postList={postList} currentUser={currentUser} />
         </div>
+        {!hasMore ? (
+          <div className="w-100 general-layout h-100">
+            <span className="my-4">Không còn bài viết hiển thị</span>
+          </div>
+        ) : null}
       </div>
     );
   }
-  return null;
+  return (
+    <div className="general-layout h-100 w-100 mt-3">
+      <Spin indicator={antIcon} />
+    </div>
+  );
 };
 
 const mapStateToProps = (state) => ({

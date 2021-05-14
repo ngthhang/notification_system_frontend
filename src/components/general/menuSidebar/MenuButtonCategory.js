@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
-  Button, Avatar,
+  Button, Avatar, Skeleton,
 } from 'antd';
 import { Redirect } from 'react-router-dom';
 import colorArray from '../../../utils/colorArray';
 
 const MenuButtonCategory = ({ aliasKey, name }) => {
   const [redirect, enableRedirect] = useState(false);
+  const [loading, setLoading] = useState(true);
   if (redirect) {
     return <Redirect to={`/categories/${aliasKey}`} />;
+  }
+
+  setTimeout(() => {
+    setLoading(false);
+  }, 2000);
+
+  if (loading) {
+    return <Skeleton className="w-100" active paragraphs={{ rows: 2 }} />;
   }
 
   return (

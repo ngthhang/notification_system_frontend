@@ -3,7 +3,7 @@ import {
   Image, Row, Col,
 } from 'antd';
 
-const NotiContent = ({ images, id }) => {
+const CardNotiImageGroup = ({ images, id }) => {
   const len = images.length;
   let span = 12;
   if (len === 1) {
@@ -24,8 +24,8 @@ const NotiContent = ({ images, id }) => {
               src = item;
             }
             return (
-              <Col key={id + images.indexOf(item)} span={span} className="px-1">
-                <Image src={src} height="auto" width="100%" />
+              <Col span={span} className="px-1">
+                <Image key={id + images.indexOf(item)} src={src} height="auto" width="100%" />
               </Col>
             );
           })}
@@ -35,4 +35,4 @@ const NotiContent = ({ images, id }) => {
   );
 };
 
-export default NotiContent;
+export default CardNotiImageGroup;
