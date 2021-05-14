@@ -158,6 +158,7 @@ const CreatePost = ({
         visible={isModalVisible}
         onOk={handleOk}
         closable
+        destroyOnClose
         onCancel={handleCancel}
       >
         {

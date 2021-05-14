@@ -16,10 +16,20 @@ const { TextArea } = Input;
 const NotiHeader = ({
   poster, createdAt, posterType, postId, noti, dispatch, postUpdated,
 }) => {
+  const preFile = [];
+  if (noti.image && noti.image.length > 0) {
+    noti.image.map((i) => preFile.push({
+      uid: noti.image.indexOf(i),
+      name: 'previous.png',
+      status: 'done',
+      url: `https://witty-ruby-lace.glitch.me/${i}`,
+    }));
+  }
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setContent] = useState(noti.content);
   const [newVideo, setVideo] = useState(noti.video);
-  const [currentFile, setFile] = useState(noti.image);
+  const [previousFile, setPreFile] = useState(preFile);
+  const [currentFile, setFile] = useState([]);
   const [redirect, setRedirect] = useState(false);
 
   let name;
@@ -69,6 +79,9 @@ const NotiHeader = ({
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setContent(noti.content);
+    setVideo(noti.video);
+    setPreFile(preFile);
   };
 
   const deletePost = async () => {
@@ -88,7 +101,7 @@ const NotiHeader = ({
         deletePost();
       },
       onCancel() {
-        console.log('Cancel');
+        console.log('Huỷ xoá bài viết');
       },
     });
   };
@@ -125,22 +138,38 @@ const NotiHeader = ({
 
   const props = {
     onRemove: (file) => {
-      setFile(() => {
-        if (currentFile.length === 1) {
-          return setFile([]);
-        }
-        const index = currentFile.indexOf(file);
-        const newFileList = currentFile.slice();
-        newFileList.splice(index, 1);
-        return {
-          currentFile: newFileList,
-        };
-      });
+      if (file.name === 'previous.png') {
+        setPreFile(() => {
+          if (currentFile.length === 1) {
+            return setFile([]);
+          }
+          console.log(file);
+          const index = previousFile.indexOf(file);
+          const newFileList = previousFile.slice();
+          newFileList.splice(index, 1);
+          return {
+            previousFile: newFileList,
+          };
+        });
+      } else {
+        setFile(() => {
+          if (currentFile.length === 1) {
+            return setFile([]);
+          }
+          const index = currentFile.indexOf(file);
+          const newFileList = currentFile.slice();
+          newFileList.splice(index, 1);
+          return {
+            currentFile: newFileList,
+          };
+        });
+      }
     },
     beforeUpload: (file) => {
       setFile([...currentFile, file]);
       return false;
     },
+    defaultFileList: preFile,
     currentFile,
   };
 
@@ -175,6 +204,7 @@ const NotiHeader = ({
       <Modal
         title="Sửa bài viết"
         width={700}
+        destroyOnClose
         id="card-create-post"
         bodyStyle={{
           overflow: 'auto',
@@ -197,7 +227,6 @@ const NotiHeader = ({
           <Upload
             {...props}
             listType="picture-card"
-            fileList={currentFile}
           >
             <div>
               <PlusOutlined />

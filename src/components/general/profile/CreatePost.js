@@ -105,6 +105,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
       </div>
       <Modal
         title="Tạo bài viết"
+        destroyOnClose
         width={700}
         id="card-create-post"
         bodyStyle={{

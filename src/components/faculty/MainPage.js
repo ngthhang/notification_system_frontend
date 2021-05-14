@@ -20,6 +20,7 @@ const MainPage = ({ dispatch }) => {
   const currentUserRole = localStorage.getItem('role');
   const currentUserId = localStorage.getItem('user');
   const [currentUser, setCurrentUser] = useState({});
+  const [height, setHeight] = useState(true);
   const [loading, setLoading] = useState(true);
   let dataCurrentUser;
   dispatch(changeRedirect('newsfeed'));
@@ -53,12 +54,15 @@ const MainPage = ({ dispatch }) => {
     );
   }
 
+  setTimeout(() => setHeight(false),
+    2000);
+
   return (
-    <div className="general-screen w-100">
+    <div className={`general-screen justify-content-start w-100 ${height ? 'h-100' : ''}`}>
       <AdvanceHeader />
-      <Row className="general-layout mt-3 w-100">
-        <Col span={24} xs={24} lg={0} xxl={0} xl={0} md={24} sm={24} className="w-100">
-          <Tabs defaultActiveKey="2" className="general-layout w-100" size="large">
+      <Row className="general-layout mt-3 w-100 h-100">
+        <Col span={24} xs={24} lg={0} xxl={0} xl={0} md={24} sm={24} className="w-100 h-100">
+          <Tabs defaultActiveKey="2" className="general-layout w-100 h-100" size="large">
             <TabPane tab="Chuyên mục" key="1" className="w-100 h-100">
               <LeftMenu currentUser={currentUser} />
             </TabPane>
@@ -71,8 +75,8 @@ const MainPage = ({ dispatch }) => {
           </Tabs>
         </Col>
         <Col span={0} xs={0} lg={24} xxl={0} xl={0} md={0} sm={0}>
-          <Tabs defaultActiveKey="2" className="general-layout w-100" size="large">
-            <TabPane tab="Chuyên mục" key="1" className="w-100">
+          <Tabs defaultActiveKey="2" className="general-layout w-100 h-100" size="large">
+            <TabPane tab="Chuyên mục" key="1" className="w-100 h-100">
               <LeftMenu currentUser={currentUser} />
             </TabPane>
             <TabPane tab="Bảng tin" key="2" className="w-100 h-100">

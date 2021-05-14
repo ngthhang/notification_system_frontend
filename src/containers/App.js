@@ -15,6 +15,9 @@ import NotiDetailScreen from './NotiDetailScreen';
 
 class App extends React.Component {
   render() {
+    console.warn = () => { };
+    console.error = () => { };
+    console.log = () => { };
     return (
       <Router>
         <Switch>

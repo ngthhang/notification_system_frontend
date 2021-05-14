@@ -171,6 +171,7 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
+        showStatusChangePassword('success', 'Đăng xuất thành công');
         return <Redirect to="/login" />;
       case 'profile':
         return <Redirect to={`/profile/student/${id}`} />;

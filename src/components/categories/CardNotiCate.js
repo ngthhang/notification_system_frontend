@@ -64,10 +64,10 @@ const CardNotiCate = ({
     const res = await deleteNoti(data);
     console.log(res);
     if (res.code === 1) {
-      showStatus('success', 'Sửa thông báo thành công');
+      showStatus('success', 'Xoá thông báo thành công');
       dispatch(updateNotifi(!notiUpdated));
     } else {
-      showStatus('error', 'Sửa thông báo thất bại');
+      showStatus('error', 'Xoá thông báo thất bại');
     }
     if (redirectFaculty === 'noti-detail') {
       setRedirect(true);
@@ -185,7 +185,7 @@ const CardNotiCate = ({
         <div className="w-100 general-layout-row align-itemsm-center justify-content-between mb-2">
           <span className="text-wrap text-content">{item.content}</span>
           {isCurrentUser ? (
-            <Dropdown overlay={menu} placement="bottomRight" trigger="click" className="align-self-start">
+            <Dropdown overlay={menu} placement="bottomRight" trigger="click" className="mx-4 align-self-start">
               <Button icon={<EllipsisOutlined />} size="large" shape="circle" className="btn-more-noti" />
             </Dropdown>
           ) : null}
@@ -213,6 +213,7 @@ const CardNotiCate = ({
         title="Sửa bài viết"
         width={700}
         id="card-create-post"
+        destroyOnClose
         bodyStyle={{
           overflow: 'auto',
           display: 'flex',

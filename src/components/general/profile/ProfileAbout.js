@@ -122,6 +122,7 @@ const ProfileAbout = ({
           justifyContent: 'start',
           height: 'auto',
         }}
+        destroyOnClose
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
