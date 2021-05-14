@@ -23,10 +23,12 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
   const isStudent = role === 'student';
 
   useEffect(() => {
-    if (user.avatar.includes('public')) {
-      setUserAva(`https://witty-ruby-lace.glitch.me/${user.avatar}`);
-    } else {
-      setUserAva(user.avatar);
+    if (isStudent) {
+      if (user.avatar.includes('public')) {
+        setUserAva(`https://witty-ruby-lace.glitch.me/${user.avatar}`);
+      } else {
+        setUserAva(user.avatar);
+      }
     }
   });
 

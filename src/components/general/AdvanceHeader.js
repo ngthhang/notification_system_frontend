@@ -47,7 +47,14 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
         }
         setUser(data);
         break;
-      default: break;
+      default:
+        data = await findUser(currentId);
+        if (data.code === 0 || data.code === 13) {
+          logOut();
+          break;
+        }
+        setUser(data);
+        break;
     }
 
     setRole(currentRole);
@@ -73,6 +80,11 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
   const handleLogout = () => {
     enableRedirect(true);
     dispatch(changeRedirect('logout'));
+  };
+
+  const redirectCreateAccount = () => {
+    enableRedirect(true);
+    dispatch(changeRedirect('create-account'));
   };
 
   const onClick = ({ key }) => {
@@ -119,6 +131,8 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
         break;
       case 'newsfeed':
         return <Redirect to="/" />;
+      case 'create-account':
+        return <Redirect to="admin" />;
       default:
         break;
     }
@@ -133,9 +147,9 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
           <Avatar className="d-flex align-items-center justify-content-center header-avatar" src={currentAvatar} icon={<UserOutlined />} />
           <span className="user-name mx-2">{user && role === 'student' ? user.display_name : user.name}</span>
         </Button>
-        {role === 'Admin' ? (
+        {role === 'admin' ? (
           <Tooltip title="Tạo tài khoản">
-            <Button className="general-layout btn-dropdown mx-2" shape="circle" size="large" icon={<PlusOutlined />} />
+            <Button className="general-layout btn-dropdown mx-2" onClick={redirectCreateAccount} shape="circle" size="large" icon={<PlusOutlined />} />
           </Tooltip>
         ) : null}
         <Tooltip title="Tài khoản">

@@ -1,44 +1,84 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import generator from 'generate-password';
 import {
   Form,
+  Spin,
   Input,
   Button,
   Checkbox,
   Tooltip,
   Row, Col,
 } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import setDimension from '../../actions/windowDimension';
+import { getAllCategories } from '../../services/categories.service';
 import changeRedirect from '../../actions/redirectFaculty';
+import AdvanceHeader from '../general/AdvanceHeader';
+import Footer from '../general/Footer';
 
-class AddAccount extends Component {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(changeRedirect('create-account'));
-    window.addEventListener('resize', this.updateDimensions);
-  }
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateDimensions);
-  }
+const AddAccount = ({ dispatch, windowDimension }) => {
+  const [fullName, setFullName] = useState('');
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [checkedCate, setCheckedCate] = useState([]);
+  dispatch(changeRedirect('create-account'));
+  const [categories, setCate] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  onChange = (checkedValues) => {
-    console.log('checked = ', checkedValues);
-  }
+  const onChange = (checkedValues) => {
+    setCheckedCate(checkedValues);
+  };
 
-  onFinish = (values) => {
+  const onFinish = (values) => {
     console.log(values);
-  }
+    const data = {
+      category_id: checkedCate,
+      username: userName,
+      role: 'Faculty',
+      name: fullName,
+      avatar: null,
+      password,
+    };
 
-  updateDimensions = () => {
-    const { dispatch } = this.props;
+    console.log(data);
+  };
+
+  const updateDimensions = () => {
     dispatch(setDimension(window.innerWidth, window.innerHeight));
   };
 
-  render() {
-    const { windowDimension } = this.props;
-    const { width } = windowDimension;
+  useEffect(async () => {
+    const res = await getAllCategories();
+    setCate(res);
+    window.addEventListener('resize', updateDimensions);
+    setLoading(false);
+    setPassword(generator.generate({
+      length: 10,
+      numbers: true,
+    }));
+    return (() => {
+      window.removeEventListener('resize', updateDimensions);
+    });
+  }, []);
+
+  const { width } = windowDimension;
+
+  if (loading) {
     return (
+      <div className="general-screen h-100">
+        <AdvanceHeader />
+        <Spin indicator={antIcon} className="my-5 h-100" />
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="general-screen">
+      <AdvanceHeader />
       <div className="general-layout mt-4">
         <div className="col-xl-9 col-xxl-9 col-lg-9 col-md-11 col-sm-11 col-11 align-items-center justify-content-center bg-white card-add-account p-3">
           <span className="header-text align-self-center pt-4">TẠO TÀI KHOẢN</span>
@@ -48,7 +88,7 @@ class AddAccount extends Component {
             wrapperCol={{ span: width < 1300 ? 24 : 12 }}
             layout="horizontal"
             size="large"
-            onFinish={this.onFinish}
+            onFinish={onFinish}
           >
             <Form.Item
               name="fullname"
@@ -60,7 +100,7 @@ class AddAccount extends Component {
                 },
               ]}
             >
-              <Input />
+              <Input onChange={(e) => setFullName(e.target.value)} />
             </Form.Item>
             <Form.Item
               name="username"
@@ -72,13 +112,13 @@ class AddAccount extends Component {
                 },
               ]}
             >
-              <Input />
+              <Input onChange={(e) => setUserName(e.target.value)} />
             </Form.Item>
             <Tooltip title="Mật khẩu được tạo tự động">
               <Form.Item
                 label="Mật khẩu"
               >
-                <Input defaultValue="123123123" disabled />
+                <Input onChange={(e) => setPassword(e.target.value)} value={password} disabled />
               </Form.Item>
             </Tooltip>
             <Form.Item
@@ -91,74 +131,13 @@ class AddAccount extends Component {
                 },
               ]}
             >
-              <Checkbox.Group onChange={this.onChange}>
+              <Checkbox.Group onChange={onChange}>
                 <Row>
-                  <Col span={12}>
-                    <Checkbox value="CTHSSV">Phòng Công tác học sinh sinh viên</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="DH">Phòng Đại học</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="SDH">Phòng Sau đại học</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="DTMT">Phòng điện toán và máy tính</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="KTKDCL">Phòng khảo thí và kiểm định chất lượng</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="TC">Phòng tài chính</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="TA">TDT Creative Language Center</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="TH">Trung tâm tin học</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="SDTC">Trung tâm đào tạo phát triển xã hội (SDTC)</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="ATEM">Trung tâm phát triển Khoa học quản lý và Ứng dụng công nghệ (ATEM)</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="DNCSV">Trung tâm hợp tác doanh nghiệp và cựu sinh viên</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="LAW">Khoa Luật</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="NNTH">Trung tâm ngoại ngữ - tin học - bồi dưỡng văn hoá</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="CSKTKD">Viện chính sách kinh tế và kinh doanh</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="MTCN">Khoa Mỹ thuật công nghiệp</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="DDT">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="CNTT">Khoa Công nghệ thông tin</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="QTKD">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="MT">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="LDCD">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="TCNH">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
-                  <Col span={12}>
-                    <Checkbox value="GDQT">Khoa Điện - Điện tử</Checkbox>
-                  </Col>
+                  {categories.length > 0 && categories.map((item) => (
+                    <Col span={12} key={item._id}>
+                      <Checkbox value={item._id}>{item.name}</Checkbox>
+                    </Col>
+                  ))}
                 </Row>
               </Checkbox.Group>
             </Form.Item>
@@ -170,9 +149,10 @@ class AddAccount extends Component {
           </Form>
         </div>
       </div>
-    );
-  }
-}
+      <Footer />
+    </div>
+  );
+};
 
 const mapStateToProps = (state) => ({
   windowDimension: state.windowDimension,

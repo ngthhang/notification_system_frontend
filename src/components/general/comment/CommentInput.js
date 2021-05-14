@@ -13,7 +13,8 @@ const CommentInput = ({
     ref: inputRef,
   };
   let posterAvatar = '';
-  if (user.avatar) {
+  const role = localStorage.getItem('role');
+  if (role === 'student') {
     const { avatar } = user;
     if (avatar && avatar.includes('public')) {
       posterAvatar = `https://witty-ruby-lace.glitch.me/${avatar}`;

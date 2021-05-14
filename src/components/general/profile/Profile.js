@@ -64,6 +64,8 @@ const Profile = ({
       default:
         break;
     }
+    console.log('post at newsfeed');
+    console.log(posts);
     await dispatch(updateList(!listUpdate));
     return null;
   }, [postUpdated]);

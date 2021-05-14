@@ -19,8 +19,7 @@ const EditComment = ({
   },
   [postUpdated]);
 
-  const postEditComment = async (e) => {
-    console.log(e);
+  const postEditComment = async () => {
     const data = {
       post_id: postId,
       content: currentComment,
@@ -42,6 +41,7 @@ const EditComment = ({
     };
     const res = await deleteCommentById(data);
     console.log(res);
+    dispatch(updatePost(!postUpdated));
   };
 
   const modalConfirm = () => {

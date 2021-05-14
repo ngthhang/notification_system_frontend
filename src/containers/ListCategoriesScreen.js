@@ -4,8 +4,6 @@ import { message } from 'antd';
 import { Redirect } from 'react-router-dom';
 import ListCategories from '../components/general/ListCategories';
 import changeRedirect from '../actions/redirectFaculty';
-import AdvanceHeader from '../components/general/AdvanceHeader';
-import Footer from '../components/general/Footer';
 
 const ListCategoriesScreen = ({ dispatch, currentUser }) => {
   dispatch(changeRedirect('list-categories'));
@@ -15,11 +13,7 @@ const ListCategoriesScreen = ({ dispatch, currentUser }) => {
     return <Redirect to="/login" />;
   }
   return (
-    <div className="general-layout">
-      <AdvanceHeader />
-      <ListCategories />
-      <Footer />
-    </div>
+    <ListCategories />
   );
 };
 

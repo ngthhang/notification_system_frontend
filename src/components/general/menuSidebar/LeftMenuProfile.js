@@ -21,7 +21,7 @@ function LeftMenuProfile() {
     if (currentRole === 'student') {
       const data = await findStudent(currentUserID);
       if (data.avatar.includes('public')) {
-        data.avatar = `https://webnc-final-backend.herokuapp.com/${data.avatar}`;
+        data.avatar = `https://witty-ruby-lace.glitch.me/${data.avatar}`;
       }
       setUser(data);
     }

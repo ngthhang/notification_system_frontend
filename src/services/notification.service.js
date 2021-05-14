@@ -1,102 +1,94 @@
-import { getPosterById } from './post.service';
-import { logOut } from './auth.service';
 import axios from './base.service';
 
-export const login = async (data) => {
-  try {
-    const res = await axios.post('/user/login', data);
-
-    const { code } = res.data;
-    if (code === 0) {
-      return { code: 0, message: res.data.message };
-    } if (code === 13) {
-      logOut();
-    }
-    return res;
-  } catch (e) {
-    console.log(e.message);
-    return { code: 0, message: 'Lấy thông tin thất bại' };
-  }
-};
-
-export const getInfo = () => {
-  console.log('hello');
-};
-
-export const getUser = async (id) => {
+export const getAllNoti = async (page) => {
   const token = localStorage.getItem('token');
-
   try {
-    const res = await axios.get(`user/${id}`, {
+    const res = await axios.get(`/notify/new/${page}`, {
       headers: {
         Authorization: `Bearer ${token}`, // the token is a variable which holds the token
       },
     });
 
     const { code } = res.data;
-    if (code === 0) {
-      return { code: 0, message: res.data.message };
-    } if (code === 13) {
+    if (code === 13) {
       logOut();
     }
-    const { user } = res.data;
-    console.log('user search');
-    console.log(user);
-    if (user.role === 'Student') {
-      console.log(getPosterById(user._id));
-      return getPosterById(user._id);
-    }
-    return res.data.user;
+    return res.data.notify;
   } catch (e) {
     console.log(e.message);
+    // logOut();
     return { code: 0, message: 'Lấy thông tin thất bại' };
   }
 };
 
-export const findUser = async (userId) => {
+export const deleteNoti = async (data) => {
   const token = localStorage.getItem('token');
 
   try {
-    const res = await axios.get(`user/${userId}`, {
+    const res = await axios.post('/notify/delete', data, {
       headers: {
         Authorization: `Bearer ${token}`, // the token is a variable which holds the token
       },
     });
 
     const { code } = res.data;
-    if (code === 0) {
-      return { code: 0, message: res.data.message };
-    } if (code === 13) {
+    if (code === 13) {
       logOut();
     }
-    const { user } = res.data;
-    return user;
+    return res.data;
   } catch (e) {
     console.log(e.message);
+    // logOut();
     return { code: 0, message: 'Lấy thông tin thất bại' };
   }
 };
 
-export const createUser = async (data) => {
+export const updateNoti = async (data) => {
   const token = localStorage.getItem('token');
+  const bodyFormData = new FormData();
+  bodyFormData.append('noti_id', data.notify_id);
+  bodyFormData.append('header', data.header);
+  bodyFormData.append('content', data.content);
+  if (data.attachment !== undefined) {
+    data.attachment.map((item) => bodyFormData.append('attachment', item));
+  }
 
   try {
-    const res = await axios.post('user/create', data, {
+    const res = await axios.put('/notify', bodyFormData, {
       headers: {
         Authorization: `Bearer ${token}`, // the token is a variable which holds the token
       },
     });
 
     const { code } = res.data;
-    if (code === 0) {
-      return { code: 0, message: res.data.message };
-    } if (code === 13) {
+    if (code === 13) {
       logOut();
     }
-    const { user } = res.data;
-    return user;
+    return res.data;
   } catch (e) {
     console.log(e.message);
+    // logOut();
+    return { code: 0, message: 'Lấy thông tin thất bại' };
+  }
+};
+
+export const getNotiByCategory = async (cateId, page) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get(`/notify/${cateId}/${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // the token is a variable which holds the token
+      },
+    });
+
+    const { code } = res.data;
+    if (code === 13) {
+      logOut();
+    }
+    return res.data.notify;
+  } catch (e) {
+    console.log(e.message);
+    // logOut();
     return { code: 0, message: 'Lấy thông tin thất bại' };
   }
 };

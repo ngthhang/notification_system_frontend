@@ -18,9 +18,10 @@ const UserComment = ({
   const [loading, setLoading] = useState(true);
   const [redirect, setRedirect] = useState(false);
   const [studentId, setStudentId] = useState('');
-  const isCurrentUser = currentUser._id === user._id;
-
+  const isCurrentUser = user._id === currentUser._id;
   useEffect(async () => {
+    console.log('posterid');
+    console.log(posterId);
     const res = await getUser(posterId);
     setUser(res);
     if (res.avatar) {

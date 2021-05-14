@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { message } from 'antd';
 import AddAccount from '../components/admin/AddAccount';
-import AdvanceHeader from '../components/general/AdvanceHeader';
-import Footer from '../components/general/Footer';
 
 const AdminScreen = ({ currentUser }) => {
   const { token } = currentUser;
@@ -13,11 +11,7 @@ const AdminScreen = ({ currentUser }) => {
     return <Redirect to="/login" />;
   }
   return (
-    <div className="general-screen">
-      <AdvanceHeader />
-      <AddAccount />
-      <Footer />
-    </div>
+    <AddAccount />
   );
 };
 

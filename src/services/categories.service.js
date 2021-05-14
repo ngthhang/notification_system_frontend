@@ -13,7 +13,7 @@ export const getAllCategories = async () => {
     if (code === 13) {
       logOut();
     }
-    return res.data;
+    return res.data.data;
   } catch (e) {
     console.log(e.message);
     return { code: 0, message: 'Lấy thông tin thất bại' };
@@ -33,7 +33,7 @@ export const findCategoryByAliasKey = async (key) => {
     if (code === 13) {
       logOut();
     }
-    return res.data;
+    return res.data.data;
   } catch (e) {
     console.log(e.message);
     return { code: 0, message: 'Lấy thông tin thất bại' };

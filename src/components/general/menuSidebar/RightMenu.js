@@ -1,18 +1,10 @@
-import React, { Component } from 'react';
-import { Divider } from 'antd';
-import NewPost from './NewPost';
+import React from 'react';
 import NewNotification from './NewNotification';
 
-class RightMenu extends Component {
-  render() {
-    return (
-      <div className="right-menu">
-        <NewPost />
-        <Divider type="horizontal" />
-        <NewNotification />
-      </div>
-    );
-  }
-}
+const RightMenu = ({ currentUser }) => (
+  <div className="right-menu">
+    <NewNotification currentUser={currentUser} />
+  </div>
+);
 
 export default RightMenu;

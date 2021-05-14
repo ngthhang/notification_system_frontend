@@ -9,10 +9,12 @@ import isAuth from './isAuth';
 import updatePost from './updatePost';
 import updateComment from './updateComment';
 import updateList from './updateList';
+import updateNoti from './updateNoti';
 
 export default combineReducers({
   count,
   redirectLogin,
+  updateNoti,
   logoImg,
   windowDimension,
   redirectFaculty,

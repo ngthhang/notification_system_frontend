@@ -13,8 +13,9 @@ const CategoryMenuList = ({ dispatch }) => {
   const [listCategories, setListCategories] = useState([]);
 
   useEffect(async () => {
-    const data = await getAllCategories();
-    setListCategories(data.data);
+    const res = await getAllCategories();
+    setListCategories(res);
+    console.log(res);
   }, []);
 
   if (redirect) {

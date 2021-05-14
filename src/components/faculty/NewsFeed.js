@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin, message } from 'antd';
+import { message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import CreatePost from './CreatePost';
 import ListPost from '../general/profile/ListPost';
-import { getUser } from '../../services/user.service';
-import { findStudent } from '../../services/student.service';
 import { getAllPostByPage } from '../../services/post.service';
+import updateList from '../../actions/updateList';
 
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-
-const NewsFeed = ({ postUpdated }) => {
-  const [currentUser, setCurrentUser] = useState({});
+const NewsFeed = ({
+  postUpdated, currentUser, listUpdate, dispatch,
+}) => {
+  const role = localStorage.getItem('role');
   const [loadingCreate, setLoadingCreate] = useState(true);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [postList, setPostList] = useState(true);
   const [currentPage, setPage] = useState(1);
-  const currentUserRole = localStorage.getItem('role');
-  const currentUserId = localStorage.getItem('user');
-  let dataCurrentUser;
 
   const checkScroll = () => {
     window.onscroll = () => {
@@ -31,34 +26,13 @@ const NewsFeed = ({ postUpdated }) => {
   };
 
   useEffect(async () => {
-    switch (currentUserRole) {
-      case 'student':
-        dataCurrentUser = await findStudent(currentUserId);
-        break;
-      case 'faculty':
-        dataCurrentUser = await getUser(currentUserId);
-        break;
-      case 'admin':
-        dataCurrentUser = await getUser(currentUserId);
-        break;
-      default:
-        break;
-    }
     const posts = await getAllPostByPage(currentPage);
     setPostList(posts);
-    setCurrentUser(dataCurrentUser);
     setLoadingCreate(false);
     setLoading(false);
     checkScroll();
+    await dispatch(updateList(!listUpdate));
   }, [postUpdated]);
-
-  if (loadingCreate) {
-    return (
-      <div className="d-flex flex-column align-items-center justify-content-start h-100 pb-5 w-100 h-100">
-        <Spin indicator={antIcon} />
-      </div>
-    );
-  }
 
   const handleInfiniteOnLoad = async () => {
     setLoading(true);
@@ -70,31 +44,36 @@ const NewsFeed = ({ postUpdated }) => {
       setHasMore(false);
       return;
     }
-    console.log('hêh');
     setPostList(postList.concat(res));
     setLoading(false);
   };
 
-  return (
-    <div className="d-flex flex-column align-items-center justify-content-start h-100 pb-5 w-100">
-      <CreatePost user={currentUser} />
-      <div className="w-90 scroll-content">
-        <InfiniteScroll
-          initialLoad={false}
-          pageStart={0}
-          loadMore={handleInfiniteOnLoad}
-          hasMore={!loading && hasMore}
-          useWindow
-        >
-          <ListPost postList={postList} currentUser={currentUser} />
-        </InfiniteScroll>
+  if (!loadingCreate) {
+    return (
+      <div className="d-flex flex-column align-items-center justify-content-start h-100 pb-5 w-100">
+        {
+          role !== 'admin' ? (<CreatePost user={currentUser} />) : null
+        }
+        <div className="w-90 scroll-content">
+          <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            loadMore={handleInfiniteOnLoad}
+            hasMore={!loading && hasMore}
+            useWindow
+          >
+            <ListPost postList={postList} currentUser={currentUser} />
+          </InfiniteScroll>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  return null;
 };
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  listUpdate: state.updateList,
 });
 
 export default connect(mapStateToProps)(NewsFeed);

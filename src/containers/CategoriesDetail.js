@@ -1,23 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import changeRedirect from '../actions/redirectFaculty';
-import AdvanceHeader from '../components/general/AdvanceHeader';
-import Footer from '../components/general/Footer';
+import ListNotiCategoriesDetail from '../components/categories/ListNotiCategoriesDetail';
 
-const CategoriesDetail = ({ aliasKey, dispatch }) => {
-  const [category, setCategory] = useState(aliasKey);
-
-  useEffect(() => {
-    dispatch(changeRedirect('categories-detail'));
-    setCategory('hello');
-  }, []);
-
+const CategoriesDetail = ({ match }) => {
+  const { aliasKey } = match.params;
   return (
-    <div className="general-layout">
-      <AdvanceHeader />
-      <span>{category}</span>
-      <Footer />
-    </div>
+    <ListNotiCategoriesDetail aliasKey={aliasKey} />
   );
 };
 

@@ -22,9 +22,11 @@ const LoginForm = () => {
     console.log('Received values of form: ', values);
     try {
       const res = await login(values);
+      console.log(res);
       const { code } = res.data;
       const dataMessage = res.data.message;
       if (code === 0) {
+        console.log('hello');
         return message.error(dataMessage);
       }
       const { user, token } = res.data;
@@ -32,10 +34,10 @@ const LoginForm = () => {
       message.success('Đăng nhập thành công');
       localStorage.setItem('token', token);
       localStorage.setItem('user', _id);
-      localStorage.setItem('role', role);
+      localStorage.setItem('role', role.toLowerCase());
       enableRedirect(true);
     } catch (e) {
-      const m = e.response.data.message;
+      const m = e.message;
       message.error(m);
     }
     return 0;
