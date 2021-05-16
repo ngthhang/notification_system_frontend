@@ -8,10 +8,13 @@ import {
 } from '@ant-design/icons';
 import updatePost from '../../../actions/updatePost';
 import { createPost } from '../../../services/post.service';
+import urlRoute from '../../../utils/route';
 
 const { TextArea } = Input;
 
-const CreatePost = ({ user, postUpdated, dispatch }) => {
+const CreatePost = ({
+  user, postUpdated, dispatch, listUpdated,
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isShowVideo, setShowVideo] = useState(false);
   const [currentFile, setFile] = useState([]);
@@ -21,11 +24,11 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
 
   useEffect(() => {
     if (user.avatar.includes('public')) {
-      setUserAva(`https://witty-ruby-lace.glitch.me/${user.avatar}`);
+      setUserAva(`${urlRoute}${user.avatar}`);
     } else {
       setUserAva(user.avatar);
     }
-  });
+  }, [listUpdated]);
 
   const showStatus = (type, message) => {
     notification[type]({
@@ -61,6 +64,7 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
     const { code, message } = res;
     if (code === 1) {
       showStatus('success', message);
+      dispatch(updatePost(!postUpdated));
     } else {
       showStatus('error', message);
     }
@@ -68,7 +72,6 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
     setContent('');
     setVideo('');
     setFile([]);
-    dispatch(updatePost(!postUpdated));
   };
 
   const handleOk = () => {
@@ -150,6 +153,8 @@ const CreatePost = ({ user, postUpdated, dispatch }) => {
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  infoUpdated: state.updateUserInfo,
+  listUpdated: state.updateList,
 });
 
 export default connect(mapStateToProps)(CreatePost);

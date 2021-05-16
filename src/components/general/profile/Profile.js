@@ -1,84 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-import { Row, Col, message } from 'antd';
+import { Row, Col } from 'antd';
 import ProfileHeader from './ProfileHeader';
 import ProfileAbout from './ProfileAbout';
 import changeRedirect from '../../../actions/redirectFaculty';
 import { findStudent } from '../../../services/student.service';
-import { getUser } from '../../../services/user.service';
 import { getPostByPoster } from '../../../services/post.service';
 import updateList from '../../../actions/updateList';
+import url from '../../../utils/route';
 
 const Profile = ({
-  dispatch, role, id, postUpdated, listUpdate,
+  dispatch, id, postUpdated, listUpdated, infoUpdated,
 }) => {
   const [user, setUser] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [userAva, setUserAva] = useState('');
-  const [redirect, enableRedirect] = useState(false);
   const [position, setPosition] = useState('');
   const [postList, setPostList] = useState([]);
-  // const [currentPage, setPage] = useState(1);
-  useEffect(async () => {
-    const currentUserRole = localStorage.getItem('role');
-    const currentUserId = localStorage.getItem('user');
-    if (id === currentUserId) {
-      dispatch(changeRedirect('profile'));
-    } else {
-      dispatch(changeRedirect('profile-someone'));
-    }
-    let data;
-    let dataCurrentUser;
-    let posts;
-    switch (currentUserRole) {
-      case 'student':
-        dataCurrentUser = await findStudent(currentUserId);
-        setCurrentUser(dataCurrentUser);
-        break;
-      case 'faculty':
-        dataCurrentUser = await getUser(currentUserId);
-        setCurrentUser(dataCurrentUser);
-        break;
-      default:
-        break;
-    }
-    switch (role) {
-      case 'student':
-        data = await findStudent(id);
-        posts = await getPostByPoster(data.user_id, 1);
-        if (data.code === 0) {
-          message.error(data.message);
-          enableRedirect(true);
-          break;
-        }
-        if (data.avatar.includes('public')) {
-          setUserAva(`https://witty-ruby-lace.glitch.me/${data.avatar}`);
-        } else {
-          setUserAva(data.avatar);
-        }
-        setUser(data);
-        setPostList(posts);
-        setPosition('Sinh viên');
-        break;
-      default:
-        break;
-    }
-    console.log('post at newsfeed');
-    console.log(posts);
-    await dispatch(updateList(!listUpdate));
-    return null;
-  }, [postUpdated, id]);
-
-  if (redirect) {
-    return <Redirect to="/" />;
+  const [hasMore, setHasMore] = useState(true);
+  let currentPage = 1;
+  const currentUserId = localStorage.getItem('user');
+  const nodeRoot = document.getElementById('root');
+  if (id === currentUserId) {
+    dispatch(changeRedirect('profile'));
+  } else {
+    dispatch(changeRedirect('profile-someone'));
   }
+
+  const getData = async () => {
+    const dataCurrentUser = await findStudent(currentUserId);
+    setCurrentUser(dataCurrentUser);
+    const data = await findStudent(id);
+    const posts = await getPostByPoster(data.user_id, currentPage);
+    if (posts.length > 0 && currentPage !== 1) {
+      setPostList(postList.concat(posts));
+    } else if (currentPage === 1) {
+      setPostList(posts);
+    } else {
+      setHasMore(false);
+    }
+    await dispatch(updateList(!listUpdated));
+  };
+
+  const getUserData = async () => {
+    const dataCurrentUser = await findStudent(currentUserId);
+    setCurrentUser(dataCurrentUser);
+    const data = await findStudent(id);
+    if (data.avatar.includes('public')) {
+      setUserAva(`${url}${data.avatar}`);
+    } else {
+      setUserAva(data.avatar);
+    }
+    setPosition('Sinh viên');
+    setUser(data);
+  };
+
+  const handleScroll = (event) => {
+    const node = event.target;
+    const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
+    if (bottom) {
+      currentPage += 1;
+      console.log('BOTTOM REACHED');
+      console.log('post list before adding new data');
+      console.log(postList);
+      getData();
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+    getData();
+  }, [id, postUpdated, infoUpdated]);
+
+  useEffect(() => {
+    getData(1);
+    nodeRoot.addEventListener('scroll', handleScroll);
+    return () => nodeRoot.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="general-layout justify-content-start w-100 h-100">
       <Row className="general-layout w-100">
         <Col span={24} className="w-100">
           <ProfileHeader name={user.display_name} avatar={userAva} position={position} />
-          <ProfileAbout postList={postList} user={user} currentUser={currentUser} />
+          <ProfileAbout hasMore={hasMore} postList={postList} user={user} currentUser={currentUser} />
         </Col>
       </Row>
     </div>
@@ -87,7 +92,8 @@ const Profile = ({
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
-  listUpdate: state.updateList,
+  listUpdated: state.updateList,
+  infoUpdated: state.updateUserInfo,
 });
 
 export default connect(mapStateToProps)(Profile);

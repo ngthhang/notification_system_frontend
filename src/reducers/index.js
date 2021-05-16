@@ -11,12 +11,18 @@ import updateComment from './updateComment';
 import updateList from './updateList';
 import updateNoti from './updateNoti';
 import updateEdit from './updateEdit';
+import updateUserInfo from './updateUserInfo';
+import updateEachComment from './updateEachComment';
+import deleteComment from './deleteComment';
 
 export default combineReducers({
   count,
   redirectLogin,
   updateNoti,
+  updateUserInfo,
   logoImg,
+  updateEachComment,
+  deleteComment,
   updateEdit,
   windowDimension,
   redirectFaculty,

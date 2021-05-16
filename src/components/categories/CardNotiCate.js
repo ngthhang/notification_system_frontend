@@ -12,36 +12,37 @@ import { updateNoti, deleteNoti } from '../../services/notification.service';
 import { getUser } from '../../services/user.service';
 import updateNotifi from '../../actions/updateNoti';
 import CardNotiImageGroup from './CardNotiImageGroup';
+import CardNotiLoading from './CardNotiLoading';
+import url from '../../utils/route';
 
 const { TextArea } = Input;
 const CardNotiCate = ({
   notiUpdated, dispatch, item, redirectFaculty, editUpdated,
 }) => {
-  let images = item.files_url;
-  const imageFile = [];
+  const images = item.files_url;
+  const preFile = [];
 
-  if (images === undefined) {
-    images = [];
-  } else {
-    images.map((i) => imageFile.push({
+  if (images !== undefined) {
+    images.map((i) => preFile.push({
       uid: images.indexOf(i),
-      name: 'image.png',
+      name: 'previous.file',
       status: 'done',
-      url: `https://witty-ruby-lace.glitch.me/${i}`,
+      src: i,
+      url: `${url}${i}`,
     }));
-    console.log(imageFile);
   }
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [header, setHeader] = useState(item.header);
   const [content, setContent] = useState(item.content);
   const [redirect, setRedirect] = useState(false);
   const [editor, setEditor] = useState({});
-  const [currentFile, setFile] = useState(imageFile);
+  const [currentFile, setFile] = useState([]);
+  const [previousFiles, setPreFile] = useState(preFile);
+  const [loading, setLoading] = useState(true);
 
   useEffect(async () => {
     setHeader(item.header);
     setContent(item.content);
-    setFile(imageFile);
     const data = await getUser(item.poster);
     setEditor(data);
   }, [editUpdated]);
@@ -64,10 +65,10 @@ const CardNotiCate = ({
     const res = await deleteNoti(data);
     console.log(res);
     if (res.code === 1) {
-      showStatus('success', 'Xoá thông báo thành công');
+      showStatus('success', res.message);
       dispatch(updateNotifi(!notiUpdated));
     } else {
-      showStatus('error', 'Xoá thông báo thất bại');
+      showStatus('error');
     }
     if (redirectFaculty === 'noti-detail') {
       setRedirect(true);
@@ -80,22 +81,26 @@ const CardNotiCate = ({
 
   const handleEditNotify = async () => {
     const { _id } = item.category;
+    const previous_files = [];
+    if (previousFiles && previousFiles.length > 0) {
+      previousFiles.map((i) => previous_files.push(i.src));
+    }
     const data = {
       header,
       content,
       attachment: currentFile,
       notify_id: item._id,
       category: _id,
+      previous_files,
     };
     console.log(data);
     const res = await updateNoti(data);
     if (res.code === 1) {
-      showStatus('success', 'Sửa thông báo thành công');
+      showStatus('success', res.message);
       dispatch(updateNotifi(!notiUpdated));
     } else {
-      showStatus('error', 'Sửa thông báo thất bại');
+      showStatus('error', res.message);
     }
-    console.log(res);
     setIsModalVisible(false);
     setFile([]);
   };
@@ -106,6 +111,10 @@ const CardNotiCate = ({
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setHeader(item.header);
+    setContent(item.content);
+    setFile([]);
+    setPreFile(preFile);
   };
 
   const confirm = () => {
@@ -139,20 +148,36 @@ const CardNotiCate = ({
 
   const props = {
     onRemove: (file) => {
-      setFile(() => {
-        if (currentFile.length <= 1) {
-          return setFile([]);
-        }
-        const index = currentFile.indexOf(file);
-        const newFileList = currentFile.slice();
-        newFileList.splice(index, 1);
-        return newFileList;
-      });
+      if (file.name === 'previous.file') {
+        setPreFile(() => {
+          if (previousFiles.length === 1) {
+            return setPreFile([]);
+          }
+          const index = previousFiles.indexOf(file);
+          const newFileList = previousFiles.slice();
+          newFileList.splice(index, 1);
+          return newFileList;
+        });
+      } else {
+        setFile(() => {
+          if (currentFile.length === 1) {
+            return setFile([]);
+          }
+          const index = currentFile.indexOf(file);
+          const newFileList = currentFile.slice();
+          newFileList.splice(index, 1);
+          return newFileList;
+        });
+      }
     },
     beforeUpload: (file) => {
-      setFile([...currentFile, file]);
+      if (file.name !== 'previous.file') {
+        setFile([...currentFile, file]);
+      }
       return false;
     },
+    defaultFileList: previousFiles,
+    currentFile,
   };
 
   const menu = (
@@ -172,10 +197,16 @@ const CardNotiCate = ({
     </Menu>
   );
 
+  setTimeout(() => { setLoading(false); },
+    2000);
+
   if (redirect) {
     return <Redirect to="/" />;
   }
 
+  if (loading) {
+    return <CardNotiLoading />;
+  }
   return (
     <Card
       title={item.header}
@@ -235,7 +266,6 @@ const CardNotiCate = ({
           <Upload
             {...props}
             listType="picture-card"
-            fileList={currentFile.length > 0 ? currentFile : null}
           >
             <div>
               <PlusOutlined />

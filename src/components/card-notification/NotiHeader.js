@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Avatar, Button, Dropdown, Menu, Modal, Upload, Input, message,
+  Avatar, Button, Dropdown, Menu, Modal, Upload, Input, notification,
 } from 'antd';
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { updatePostById, deletePostById } from '../../services/post.service';
 import updatePost from '../../actions/updatePost';
+import url from '../../utils/route';
 
 const { TextArea } = Input;
 
@@ -20,15 +21,16 @@ const NotiHeader = ({
   if (noti.image && noti.image.length > 0) {
     noti.image.map((i) => preFile.push({
       uid: noti.image.indexOf(i),
-      name: 'previous.png',
+      name: 'previous.file',
       status: 'done',
-      url: `https://witty-ruby-lace.glitch.me/${i}`,
+      src: i,
+      url: `${url}${i}`,
     }));
   }
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setContent] = useState(noti.content);
-  const [newVideo, setVideo] = useState(noti.video);
-  const [previousFile, setPreFile] = useState(preFile);
+  const [newVideo, setVideo] = useState(noti.video === undefined ? null : noti.video);
+  const [previousFiles, setPreFile] = useState(preFile);
   const [currentFile, setFile] = useState([]);
   const [redirect, setRedirect] = useState(false);
 
@@ -43,42 +45,61 @@ const NotiHeader = ({
     const currentUserId = localStorage.getItem('user');
     isCurrentUser = student_id === currentUserId;
     if (avatar && avatar.includes('public')) {
-      posterAvatar = `https://witty-ruby-lace.glitch.me/${avatar}`;
+      posterAvatar = `${url}${avatar}`;
     } else {
       posterAvatar = avatar;
     }
   }
+
+  const showStatus = (type, m) => {
+    notification[type]({
+      message: m,
+      placement: 'bottomRight',
+    });
+  };
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = async () => {
+    const previous_files = [];
+    if (previousFiles && previousFiles.length > 0) {
+      previousFiles.map((item) => previous_files.push(item.src));
+    }
     const data = {
       post_id: postId,
       content: newContent,
       attachment: currentFile,
+      previous_files,
     };
-    if (newVideo !== undefined && newVideo !== '') {
+
+    console.log(data);
+
+    if (newVideo !== undefined && newVideo !== '' && newVideo !== null) {
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|v=|\?v=)([^#&]*).*/;
       const match = newVideo.match(regExp);
-      console.log(newVideo.match(regExp));
       if (match && match[2].length === 11) {
         data.video = newVideo;
       } else {
-        console.log('helo');
-        message.error('url video không hợp lệ');
+        showStatus('error', 'url video không hợp lệ');
         return;
       }
     }
     const res = await updatePostById(data);
     console.log(res);
-    dispatch(updatePost(!postUpdated));
+    if (res.code === 1) {
+      showStatus('success', res.message);
+      dispatch(updatePost(!postUpdated));
+    } else {
+      showStatus('error', res.message);
+    }
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setFile([]);
     setContent(noti.content);
     setVideo(noti.video);
     setPreFile(preFile);
@@ -87,7 +108,12 @@ const NotiHeader = ({
   const deletePost = async () => {
     const res = await deletePostById(postId);
     console.log(res);
-    dispatch(updatePost(!postUpdated));
+    if (res.code === 1) {
+      showStatus('success', res.message);
+      dispatch(updatePost(!postUpdated));
+    } else {
+      showStatus('error', res.message);
+    }
   };
 
   const confirm = () => {
@@ -138,18 +164,15 @@ const NotiHeader = ({
 
   const props = {
     onRemove: (file) => {
-      if (file.name === 'previous.png') {
+      if (file.name === 'previous.file') {
         setPreFile(() => {
-          if (currentFile.length === 1) {
-            return setFile([]);
+          if (previousFiles.length === 1) {
+            return setPreFile([]);
           }
-          console.log(file);
-          const index = previousFile.indexOf(file);
-          const newFileList = previousFile.slice();
+          const index = previousFiles.indexOf(file);
+          const newFileList = previousFiles.slice();
           newFileList.splice(index, 1);
-          return {
-            previousFile: newFileList,
-          };
+          return newFileList;
         });
       } else {
         setFile(() => {
@@ -159,17 +182,17 @@ const NotiHeader = ({
           const index = currentFile.indexOf(file);
           const newFileList = currentFile.slice();
           newFileList.splice(index, 1);
-          return {
-            currentFile: newFileList,
-          };
+          return newFileList;
         });
       }
     },
     beforeUpload: (file) => {
-      setFile([...currentFile, file]);
+      if (file.name !== 'previous.file') {
+        setFile([...currentFile, file]);
+      }
       return false;
     },
-    defaultFileList: preFile,
+    defaultFileList: previousFiles,
     currentFile,
   };
 

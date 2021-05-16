@@ -7,9 +7,10 @@ import { SendOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { updateComment, deleteCommentById } from '../../../services/post.service';
 import updatePost from '../../../actions/updatePost';
+import deleteComment from '../../../actions/deleteComment';
 
 const EditComment = ({
-  id, content, isCurrentUser, createdAt, postId, dispatch, postUpdated,
+  id, content, isCurrentUser, createdAt, postId, dispatch, postUpdated, eachCommentUpdated,
 }) => {
   const [currentComment, editComment] = useState(content);
   const [isShowInput, showInput] = useState(false);
@@ -17,7 +18,7 @@ const EditComment = ({
   useEffect(() => {
     editComment(content);
   },
-  [postUpdated]);
+  [eachCommentUpdated]);
 
   const showStatus = (type, m) => {
     notification[type]({
@@ -42,15 +43,16 @@ const EditComment = ({
     }
   };
 
-  const deleteComment = async () => {
+  const deleteUserComment = async () => {
     const data = {
       post_id: postId,
       comment_id: id,
     };
     const res = await deleteCommentById(data);
     if (res.code === 1) {
-      dispatch(updatePost(!postUpdated));
       showStatus('success', res.message);
+      dispatch(updatePost(!postUpdated));
+      dispatch(deleteComment(true));
     } else {
       showStatus('error', res.message);
     }
@@ -64,7 +66,7 @@ const EditComment = ({
       okText: 'Đồng ý',
       cancelText: 'Huỷ',
       onOk() {
-        deleteComment();
+        deleteUserComment();
       },
       onCancel() {
         console.log('Huỷ xoá bình luận');
@@ -100,6 +102,8 @@ const EditComment = ({
 
 const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
+  eachCommentUpdated: state.updateEachComment,
+  commentUpdated: state.updateComment,
 });
 
 export default connect(mapStateToProps)(EditComment);

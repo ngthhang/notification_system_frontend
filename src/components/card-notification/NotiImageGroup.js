@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image, Row, Col,
 } from 'antd';
+import url from '../../utils/route';
 
 const NotiContent = ({ images, id }) => {
   const len = images.length;
@@ -19,7 +20,7 @@ const NotiContent = ({ images, id }) => {
           {images.map((item) => {
             let src;
             if (item.includes('public')) {
-              src = `https://witty-ruby-lace.glitch.me/${item}`;
+              src = `${url}${item}`;
             } else {
               src = item;
             }

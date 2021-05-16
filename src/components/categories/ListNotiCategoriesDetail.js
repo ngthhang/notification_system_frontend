@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-import { Button } from 'antd';
 import { getNotiByCategory } from '../../services/notification.service';
 import { findCategoryByAliasKey } from '../../services/categories.service';
 import ProfileHeader from '../general/profile/ProfileHeader';
 import CardNotiCate from './CardNotiCate';
-import CardNotiLoading from './CardNotiLoading';
 import AdvanceHeader from '../general/AdvanceHeader';
 import Footer from '../general/Footer';
 
@@ -16,69 +13,57 @@ const ListNotiCategoriesDetail = ({
   const [loading, setLoading] = useState(true);
   const [cate, setCate] = useState({});
   const [hasMore, setHasMore] = useState(true);
-  const [redirect, setRedirect] = useState(false);
-  // const [currentPage, setPage] = useState(1);
+  let currentPage = 1;
+  const nodeRoot = document.getElementById('root');
   const [notiList, setList] = useState([]);
-  useEffect(async () => {
+
+  const getData = async () => {
     const resCate = await findCategoryByAliasKey(aliasKey);
-    const res = await getNotiByCategory(resCate._id, 1);
+    const res = await getNotiByCategory(resCate._id, currentPage);
     if (res.length > 0) {
-      setList(res);
-      console.log(res);
+      setList(notiList.concat(res));
     } else {
       setHasMore(false);
     }
     setCate(resCate);
     setLoading(false);
-  }, [notiUpdated]);
-
-  const routeHome = () => {
-    setRedirect(true);
   };
 
-  if (redirect) {
-    return <Redirect to="/" />;
-  }
+  const handleScroll = (event) => {
+    const node = event.target;
+    const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
+    if (bottom) {
+      currentPage += 1;
+      console.log('BOTTOM REACHED');
+      getData();
+    }
+  };
 
-  if (!hasMore) {
-    return (
+  useEffect(() => {
+    getData();
+  }, [notiUpdated]);
 
-      <div className="general-layout h-100">
-        <AdvanceHeader />
-        <div className="general-layout justify-content-start w-100 h-100">
-          <ProfileHeader name={cate.name} position="Phòng / Khoa" avatar="" />
-          <div className="w-100 general-layout h-100">
-            <span className="my-4">Không có thông báo hiển thị</span>
-            <Button onClick={routeHome} type="primary" size="large">Quay về trang chủ</Button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  useEffect(() => {
+    nodeRoot.addEventListener('scroll', handleScroll);
+    return () => nodeRoot.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="general-layout">
       <AdvanceHeader />
       <div className="general-layout justify-content-start w-100 h-100">
         <ProfileHeader name={cate.name} position="Phòng / Khoa" avatar="" />
-        {loading ? (
-          <div className="w-90 my-4">
-            <CardNotiLoading />
-            <CardNotiLoading />
-            <CardNotiLoading />
-          </div>
-        ) : null}
-        {!loading && hasMore ? (
+        {!loading ? (
           <>
             <div className="w-90 general-layout my-4">
               {notiList && notiList.length > 0 && notiList.map((item) => (
                 <CardNotiCate item={item} key={item._id} />
               ))}
             </div>
-            <Button onClick={routeHome} type="primary" size="large">Quay về trang chủ</Button>
-
+            {!hasMore ? <span className="d-flex align-items-center justify-content-center my-2 w-100">Không còn thông báo hiển thị</span> : null}
           </>
         ) : null}
+
       </div>
       <Footer />
     </div>

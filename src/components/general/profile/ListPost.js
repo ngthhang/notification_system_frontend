@@ -4,7 +4,7 @@ import Noti from '../../card-notification/Noti';
 import updateComment from '../../../actions/updateComment';
 
 const ListPost = ({
-  postList, dispatch, commentUpdated, listUpdate, currentUser,
+  postList, dispatch, commentUpdated, listUpdate, currentUser, hasMore,
 }) => {
   useEffect(async () => {
     await dispatch(updateComment(!commentUpdated));
@@ -13,7 +13,9 @@ const ListPost = ({
     <div className="d-flex flex-column align-items-center justify-content-center w-100">
       {postList && postList.length > 0 ? postList.map((item) => (
         <Noti noti={item} key={item._id} currentUser={currentUser} />
-      )) : (<span className="d-flex align-items-center justify-content-center my-2 w-100">Chưa có bài viết mới</span>)}
+      )) : null}
+      {postList.length <= 0 ? (<span className="d-flex align-items-center justify-content-center my-2 w-100">Chưa có bài viết mới</span>) : null}
+      {!hasMore ? <span className="d-flex align-items-center justify-content-center my-2 w-100">Không còn bài viết hiển thị</span> : null}
     </div>
   );
 };

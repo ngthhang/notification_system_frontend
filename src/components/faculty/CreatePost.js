@@ -10,6 +10,7 @@ import updatePost from '../../actions/updatePost';
 import updateNoti from '../../actions/updateNoti';
 import { createPost } from '../../services/post.service';
 import { createNoti } from '../../services/notification.service';
+import urlRoute from '../../utils/route';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -32,7 +33,7 @@ const CreatePost = ({
   useEffect(async () => {
     if (isStudent) {
       if (user.avatar.includes('public')) {
-        setUserAva(`https://witty-ruby-lace.glitch.me/${user.avatar}`);
+        setUserAva(`${urlRoute}${user.avatar}`);
       } else {
         setUserAva(user.avatar);
       }
@@ -79,6 +80,13 @@ const CreatePost = ({
       showStatusCreate('fail', 'Tạo bài viết mới thất bại');
     }
     setIsModalVisible(false);
+    setContent('');
+    setFile([]);
+    setContent('');
+    setHeader('');
+    setCurrentCate('');
+    setVideo('');
+    setShowVideo(false);
     dispatch(updatePost(!postUpdated));
   };
 
@@ -100,10 +108,18 @@ const CreatePost = ({
       showStatusCreate('fail', 'Tạo thông báo mới thất bại');
     }
     setIsModalVisible(false);
+    setContent('');
+    setFile([]);
+    setContent('');
+    setHeader('');
+    setCurrentCate('');
+    setVideo('');
+    setShowVideo(false);
     dispatch(updateNoti(!notiUpdated));
   };
 
   const handleOk = () => {
+    console.log(currentFile);
     if (isStudent) {
       return handleCreatePost();
     }
@@ -111,6 +127,13 @@ const CreatePost = ({
   };
 
   const handleCancel = () => {
+    setContent('');
+    setFile([]);
+    setContent('');
+    setHeader('');
+    setCurrentCate('');
+    setVideo('');
+    setShowVideo(false);
     setIsModalVisible(false);
   };
 
@@ -141,10 +164,10 @@ const CreatePost = ({
     <div className="create-post-holder">
       <div className="general-layout-row w-100 px-0">
         <Avatar className="d-flex align-items-center justify-content-center header-avatar" src={userAva} size="large" icon={<UserOutlined />} />
-        <Input onClick={() => setIsModalVisible(true)} placeholder="Tạo bài viết công khai..." className="create-post-input" />
+        <Input onClick={() => setIsModalVisible(true)} placeholder={isStudent ? 'Tạo bài viết công khai...' : 'Tạo thông báo...'} className="create-post-input" />
       </div>
       <Modal
-        title="Tạo bài viết"
+        title={isStudent ? 'Tạo bài viết' : 'Tạo thông báo'}
         width={700}
         id="card-create-post"
         bodyStyle={{
@@ -185,7 +208,7 @@ const CreatePost = ({
           ) : null
       }
         <span className="user-name pt-3 pb-2">Nội dung</span>
-        <TextArea row="7" onChange={(e) => setContent(e.target.value)} className="w-100 p-2 textarea-text" placeholder="Nhập nội dung bài viết" />
+        <TextArea row="7" onChange={(e) => setContent(e.target.value)} className="w-100 p-2 textarea-text" placeholder="Nhập nội dung" />
         {isShowVideo ? (
           <>
             <span className="user-name pt-3 pb-2">Video URL</span>

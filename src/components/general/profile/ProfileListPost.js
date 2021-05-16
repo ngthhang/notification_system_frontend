@@ -3,11 +3,11 @@ import CreatePost from './CreatePost';
 import ListPost from './ListPost';
 
 const ProfileListPost = ({
-  isCurrentUser, user, postList, currentUser,
+  isCurrentUser, user, postList, currentUser, hasMore,
 }) => (
   <>
     { isCurrentUser ? <CreatePost user={user} /> : null}
-    <ListPost postList={postList} currentUser={currentUser} user={user} />
+    <ListPost postList={postList} currentUser={currentUser} user={user} hasMore={hasMore} />
   </>
 );
 

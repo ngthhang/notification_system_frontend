@@ -7,9 +7,10 @@ import EditComment from './EditComment';
 import CommentLoading from './CommentLoading';
 import { getUser } from '../../../services/user.service';
 import { findStudentByUserId } from '../../../services/student.service';
+import url from '../../../utils/route';
 
 const UserComment = ({
-  posterId, content, currentUser, createdAt, id, postId, postUpdated,
+  posterId, content, currentUser, createdAt, id, postId, eachCommentUpdated,
 }) => {
   const [user, setUser] = useState({});
   const [avatar, setAvatar] = useState('');
@@ -26,7 +27,7 @@ const UserComment = ({
       setName(res.display_name);
       setRole('Student');
       if (res.avatar && res.avatar.includes('public')) {
-        setAvatar(`https://witty-ruby-lace.glitch.me/${res.avatar}`);
+        setAvatar(`${url}${res.avatar}`);
       } else {
         setAvatar(res.avatar);
       }
@@ -35,7 +36,8 @@ const UserComment = ({
       setName(res.name);
     }
     setLoading(false);
-  }, [postUpdated]);
+    // console.log('user comment');
+  }, [eachCommentUpdated]);
 
   const routeProfile = async () => {
     const res = await findStudentByUserId(posterId);
@@ -74,8 +76,9 @@ const UserComment = ({
 };
 
 const mapStateToProps = (state) => ({
-  postUpdated: state.updatePost,
+  eachCommentUpdated: state.updateEachComment,
   redirectFaculty: state.redirectFaculty,
+  commentUpdated: state.updateComment,
 });
 
 export default connect(mapStateToProps)(UserComment);

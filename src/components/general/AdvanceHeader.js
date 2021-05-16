@@ -11,8 +11,11 @@ import changeRedirect from '../../actions/redirectFaculty';
 import { findUser, changePassword } from '../../services/user.service';
 import { logOut } from '../../services/auth.service';
 import { findStudent } from '../../services/student.service';
+import url from '../../utils/route';
 
-const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
+const AdvanceHeader = ({
+  logo, redirectFaculty, dispatch, infoUpdated,
+}) => {
   const [redirect, enableRedirect] = useState(false);
   const [user, setUser] = useState({});
   const [isModalVisible, setModalShowPassword] = useState(false);
@@ -35,7 +38,7 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
           break;
         }
         if (data.avatar.includes('public')) {
-          avatar = `https://witty-ruby-lace.glitch.me/${data.avatar}`;
+          avatar = `${url}${data.avatar}`;
         } else {
           avatar = data.avatar;
         }
@@ -63,7 +66,7 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
     setRole(currentRole);
     setId(currentId);
     setLoading(false);
-  }, []);
+  }, [infoUpdated]);
 
   const redirectProfile = () => {
     if (redirectFaculty === 'profile' || role !== 'student') {
@@ -301,6 +304,7 @@ const AdvanceHeader = ({ logo, redirectFaculty, dispatch }) => {
 const mapStateToProps = (state) => ({
   logo: state.logoImg,
   redirectFaculty: state.redirectFaculty,
+  infoUpdated: state.updateUserInfo,
 });
 
 export default connect(mapStateToProps)(AdvanceHeader);

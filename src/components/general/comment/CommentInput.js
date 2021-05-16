@@ -6,6 +6,7 @@ import {
 import { UserOutlined, SendOutlined } from '@ant-design/icons';
 import { createComment } from '../../../services/post.service';
 import updatePost from '../../../actions/updatePost';
+import url from '../../../utils/route';
 
 const CommentInput = ({
   user, postId, postUpdated, dispatch,
@@ -19,7 +20,7 @@ const CommentInput = ({
   if (role === 'student') {
     const { avatar } = user;
     if (avatar && avatar.includes('public')) {
-      posterAvatar = `https://witty-ruby-lace.glitch.me/${avatar}`;
+      posterAvatar = `${url}${avatar}`;
     } else {
       posterAvatar = avatar;
     }

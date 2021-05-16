@@ -6,6 +6,7 @@ import {
 import { UserOutlined } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 import { findStudent } from '../../../services/student.service';
+import url from '../../../utils/route';
 
 function LeftMenuProfile() {
   const [redirect, enableRedirect] = useState(false);
@@ -21,7 +22,7 @@ function LeftMenuProfile() {
     if (currentRole === 'student') {
       const data = await findStudent(currentUserID);
       if (data.avatar.includes('public')) {
-        data.avatar = `https://witty-ruby-lace.glitch.me/${data.avatar}`;
+        data.avatar = `${url}${data.avatar}`;
       }
       setUser(data);
     }

@@ -151,6 +151,7 @@ export const updatePostById = async (data) => {
   const token = localStorage.getItem('token');
   const bodyFormData = new FormData();
   data.attachment.map((item) => bodyFormData.append('attachment', item));
+  data.previous_files.map((item) => bodyFormData.append('previous_files[]', item));
   bodyFormData.append('content', data.content);
   bodyFormData.append('video', data.video);
   bodyFormData.append('post_id', data.post_id);

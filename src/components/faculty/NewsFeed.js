@@ -16,42 +16,55 @@ const NewsFeed = ({
   const [loadingCreate, setLoadingCreate] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [postList, setPostList] = useState([]);
-  const currentPage = 1;
-  // const [currentPage, setPage] = useState(1);
-  // const nodeRoot = document.getElementById('root');
-  // const [referenceNode, setReferenceNode] = useState();
+  const [loadingAPI, setLoadingAPI] = useState(false);
+  let currentPage = 1;
+  const nodeRoot = document.getElementById('root');
 
-  // const handleScroll = (event) => {
-  //   const node = event.target;
-  //   const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
-  //   if (bottom) {
-  //     console.log('BOTTOM REACHED');
-  //     console.log(currentPage);
-  //     console.log(postList);
-  //   }
-  // };
-
-  // const paneDidMount = (node) => {
-  //   if (node && postList.length > 0) {
-  //     node.addEventListener('scroll', handleScroll);
-  //     setReferenceNode(node);
-  //   }
-  // };
-
-  useEffect(async () => {
+  const getData = async () => {
+    setLoadingAPI(true);
     const posts = await getAllPostByPage(currentPage);
+    setLoadingAPI(false);
     console.log(`posts at page: ${currentPage}`);
-    console.log(posts);
-    if (posts.length > 0) {
-      // setPostList(postList.concat(posts));
+    if (posts.length > 0 && currentPage !== 1) {
+      setPostList(postList.concat(posts));
+      setLoadingCreate(false);
+      await dispatch(updateList(!listUpdate));
+    } else if (currentPage === 1) {
       setPostList(posts);
+      setLoadingCreate(false);
+      await dispatch(updateList(!listUpdate));
     } else {
-      // paneDidMount(nodeRoot);
       setHasMore(false);
     }
-    setLoadingCreate(false);
-    await dispatch(updateList(!listUpdate));
-    return () => referenceNode.removeEventListener('scroll', handleScroll);
+  };
+
+  // const initData = async () => {
+  //   const posts = await getAllPostByPage(1);
+  //   setPostList(postList.concat(posts));
+  //   setLoadingCreate(false);
+  //   await dispatch(updateList(!listUpdate));
+  // };
+
+  const handleScroll = (event) => {
+    const node = event.target;
+    const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
+    if (bottom && !loadingAPI) {
+      currentPage += 1;
+      console.log('BOTTOM REACHED');
+      getData();
+      setTimeout(() => {
+        setLoadingAPI(false);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    nodeRoot.addEventListener('scroll', handleScroll);
+    return () => nodeRoot.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    getData();
   }, [postUpdated]);
 
   if (!loadingCreate) {
@@ -61,13 +74,8 @@ const NewsFeed = ({
           role !== 'admin' ? (<CreatePost user={currentUser} />) : null
         }
         <div className="w-90">
-          <ListPost postList={postList} currentUser={currentUser} />
+          <ListPost hasMore={hasMore} postList={postList} currentUser={currentUser} />
         </div>
-        {!hasMore ? (
-          <div className="w-100 general-layout h-100">
-            <span className="my-4">Không còn bài viết hiển thị</span>
-          </div>
-        ) : null}
       </div>
     );
   }
@@ -82,5 +90,4 @@ const mapStateToProps = (state) => ({
   postUpdated: state.updatePost,
   listUpdate: state.updateList,
 });
-
 export default connect(mapStateToProps)(NewsFeed);

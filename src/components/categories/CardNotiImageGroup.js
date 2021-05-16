@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image, Row, Col,
 } from 'antd';
+import url from '../../utils/route';
 
 const CardNotiImageGroup = ({ images, id }) => {
   const len = images.length;
@@ -19,13 +20,13 @@ const CardNotiImageGroup = ({ images, id }) => {
           {images.map((item) => {
             let src;
             if (item.includes('public')) {
-              src = `https://witty-ruby-lace.glitch.me/${item}`;
+              src = `${url}${item}`;
             } else {
               src = item;
             }
             return (
-              <Col span={span} className="px-1">
-                <Image key={id + images.indexOf(item)} src={src} height="auto" width="100%" />
+              <Col span={span} key={id + images.indexOf(item)} className="px-1">
+                <Image src={src} height="auto" width="100%" />
               </Col>
             );
           })}

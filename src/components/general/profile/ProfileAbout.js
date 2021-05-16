@@ -7,10 +7,11 @@ import { UploadOutlined } from '@ant-design/icons';
 import { updateStudent } from '../../../services/student.service';
 import ProfileListDetail from './ProfileListDetail';
 import ProfileListPost from './ProfileListPost';
+import updateUserInfo from '../../../actions/updateUserInfo';
 import updatePost from '../../../actions/updatePost';
 
 const ProfileAbout = ({
-  user, postList, postUpdated, currentUser, dispatch,
+  user, postList, infoUpdated, currentUser, dispatch, postUpdated, hasMore,
 }) => {
   const [isModalVisible, showModal] = useState(false);
   const [faculty, changeFaculty] = useState('');
@@ -22,7 +23,7 @@ const ProfileAbout = ({
   useEffect(() => {
     changeFaculty(user.faculty_name);
     changeClass(user.class_name);
-  }, [postUpdated]);
+  }, [infoUpdated]);
 
   const showStatus = (type, message) => {
     notification[type]({
@@ -71,6 +72,7 @@ const ProfileAbout = ({
       };
     }
     const res = await updateStudent(data, user.student_id);
+    dispatch(updateUserInfo(!infoUpdated));
     dispatch(updatePost(!postUpdated));
     const { code, message } = res;
     console.log(res.student);
@@ -107,7 +109,7 @@ const ProfileAbout = ({
           {isCurrentUser ? <Button onClick={() => showModal(true)} className="btn-change-avatar mb-3">Chỉnh sửa chi tiết</Button> : null}
         </Col>
         <Col offset={1} span={14} xs={22} md={22} lg={14}>
-          <ProfileListPost currentUser={currentUser} postList={postList} user={user} isCurrentUser={isCurrentUser} />
+          <ProfileListPost currentUser={currentUser} postList={postList} user={user} isCurrentUser={isCurrentUser} hasMore={hasMore} />
         </Col>
       </Row>
       <Modal
@@ -145,6 +147,7 @@ const ProfileAbout = ({
 };
 
 const mapStateToProps = (state) => ({
+  infoUpdated: state.updateUserInfo,
   postUpdated: state.updatePost,
 });
 
