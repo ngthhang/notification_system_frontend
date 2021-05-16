@@ -9,6 +9,8 @@ import { getPostByPoster } from '../../../services/post.service';
 import updateList from '../../../actions/updateList';
 import url from '../../../utils/route';
 
+let currentPage = 1;
+let postHere = [];
 const Profile = ({
   dispatch, id, postUpdated, listUpdated, infoUpdated,
 }) => {
@@ -18,7 +20,7 @@ const Profile = ({
   const [position, setPosition] = useState('');
   const [postList, setPostList] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  let currentPage = 1;
+
   const currentUserId = localStorage.getItem('user');
   const nodeRoot = document.getElementById('root');
   if (id === currentUserId) {
@@ -33,9 +35,11 @@ const Profile = ({
     const data = await findStudent(id);
     const posts = await getPostByPoster(data.user_id, currentPage);
     if (posts.length > 0 && currentPage !== 1) {
-      setPostList(postList.concat(posts));
+      setPostList(postHere.concat(posts));
+      postHere = postHere.concat(posts);
     } else if (currentPage === 1) {
       setPostList(posts);
+      postHere = posts;
     } else {
       setHasMore(false);
     }
@@ -62,7 +66,6 @@ const Profile = ({
       currentPage += 1;
       console.log('BOTTOM REACHED');
       console.log('post list before adding new data');
-      console.log(postList);
       getData();
     }
   };

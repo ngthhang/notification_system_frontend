@@ -7,22 +7,28 @@ import Footer from '../general/Footer';
 import changeRedirect from '../../actions/redirectFaculty';
 import updateEdit from '../../actions/updateEdit';
 
+let currentPage = 1;
+let postHere = [];
+
 const ListNoti = ({
   notiUpdated, dispatch, editUpdated,
 }) => {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [notiList, setList] = useState([]);
-  let currentPage = 1;
   const nodeRoot = document.getElementById('root');
 
   const getData = async () => {
     const res = await getAllNoti(currentPage);
-    if (res.length > 0) {
+    if (res.length > 0 && currentPage !== 1) {
       console.log(currentPage);
       console.log(res);
-      setList(notiList.concat(res));
+      setList(postHere.concat(res));
+      postHere = postHere.concat(res);
       dispatch(updateEdit(!editUpdated));
+    } else if (currentPage === 1) {
+      setList(res);
+      postHere = res;
     } else {
       setHasMore(false);
     }

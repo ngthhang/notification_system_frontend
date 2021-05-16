@@ -9,28 +9,29 @@ import updateList from '../../actions/updateList';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
+const role = localStorage.getItem('role');
+const nodeRoot = document.getElementById('root');
+let currentPage = 1;
+let postHere = [];
+
 const NewsFeed = ({
   postUpdated, currentUser, listUpdate, dispatch,
 }) => {
-  const role = localStorage.getItem('role');
   const [loadingCreate, setLoadingCreate] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [postList, setPostList] = useState([]);
-  const [loadingAPI, setLoadingAPI] = useState(false);
-  let currentPage = 1;
-  const nodeRoot = document.getElementById('root');
-
+  console.log(currentPage);
   const getData = async () => {
-    setLoadingAPI(true);
     const posts = await getAllPostByPage(currentPage);
-    setLoadingAPI(false);
     console.log(`posts at page: ${currentPage}`);
     if (posts.length > 0 && currentPage !== 1) {
-      setPostList(postList.concat(posts));
+      setPostList(postHere.concat(posts));
+      postHere = postHere.concat(posts);
       setLoadingCreate(false);
       await dispatch(updateList(!listUpdate));
     } else if (currentPage === 1) {
       setPostList(posts);
+      postHere = posts;
       setLoadingCreate(false);
       await dispatch(updateList(!listUpdate));
     } else {
@@ -38,27 +39,19 @@ const NewsFeed = ({
     }
   };
 
-  // const initData = async () => {
-  //   const posts = await getAllPostByPage(1);
-  //   setPostList(postList.concat(posts));
-  //   setLoadingCreate(false);
-  //   await dispatch(updateList(!listUpdate));
-  // };
-
   const handleScroll = (event) => {
     const node = event.target;
     const bottom = node.scrollHeight - node.clientHeight === Math.ceil(node.scrollTop);
-    if (bottom && !loadingAPI) {
+    if (bottom) {
       currentPage += 1;
+      console.log(currentPage);
       console.log('BOTTOM REACHED');
       getData();
-      setTimeout(() => {
-        setLoadingAPI(false);
-      }, 1000);
     }
   };
 
   useEffect(() => {
+    getData();
     nodeRoot.addEventListener('scroll', handleScroll);
     return () => nodeRoot.removeEventListener('scroll', handleScroll);
   }, []);
