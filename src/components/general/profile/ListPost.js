@@ -15,7 +15,7 @@ const ListPost = ({
         <Noti noti={item} key={item._id} currentUser={currentUser} />
       )) : null}
       {postList.length <= 0 ? (<span className="d-flex align-items-center justify-content-center my-2 w-100">Chưa có bài viết mới</span>) : null}
-      {!hasMore ? <span className="d-flex align-items-center justify-content-center my-2 w-100">Không còn bài viết hiển thị</span> : null}
+      {!hasMore && !postList.length <= 0 ? <span className="d-flex align-items-center justify-content-center my-2 w-100">Không còn bài viết hiển thị</span> : null}
     </div>
   );
 };

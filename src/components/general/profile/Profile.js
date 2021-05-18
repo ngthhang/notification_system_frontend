@@ -73,7 +73,14 @@ const Profile = ({
   useEffect(() => {
     getUserData();
     getData();
-  }, [id, postUpdated, infoUpdated]);
+  }, [postUpdated, infoUpdated]);
+
+  useEffect(() => {
+    getUserData();
+    getData();
+    currentPage = 1;
+    console.log(currentPage);
+  }, [id]);
 
   useEffect(() => {
     getData(1);

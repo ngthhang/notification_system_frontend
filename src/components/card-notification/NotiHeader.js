@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Avatar, Button, Dropdown, Menu, Modal, Upload, Input, notification,
 } from 'antd';
@@ -29,7 +29,7 @@ const NotiHeader = ({
   }
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setContent] = useState(noti.content);
-  const [newVideo, setVideo] = useState(noti.video === undefined ? null : noti.video);
+  const [newVideo, setVideo] = useState(noti.video === undefined || noti.video === 'undefined' ? null : noti.video);
   const [previousFiles, setPreFile] = useState(preFile);
   const [currentFile, setFile] = useState([]);
   const [redirect, setRedirect] = useState(false);
@@ -51,6 +51,13 @@ const NotiHeader = ({
     }
   }
 
+  useEffect(() => {
+    setFile([]);
+    setContent(noti.content);
+    setVideo(noti.video === undefined || noti.video === 'undefined' ? null : noti.video);
+    setPreFile(preFile);
+  }, [postUpdated]);
+
   const showStatus = (type, m) => {
     notification[type]({
       message: m,
@@ -59,11 +66,14 @@ const NotiHeader = ({
   };
 
   const showModal = () => {
+    console.log(preFile);
+    setPreFile(preFile);
     setIsModalVisible(true);
   };
 
   const handleOk = async () => {
     const previous_files = [];
+    console.log(preFile);
     if (previousFiles && previousFiles.length > 0) {
       previousFiles.map((item) => previous_files.push(item.src));
     }
@@ -101,7 +111,7 @@ const NotiHeader = ({
     setIsModalVisible(false);
     setFile([]);
     setContent(noti.content);
-    setVideo(noti.video);
+    setVideo(noti.video === undefined || noti.video === 'undefined' ? null : noti.video);
     setPreFile(preFile);
   };
 

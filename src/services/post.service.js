@@ -150,8 +150,14 @@ export const deletePostById = async (postId) => {
 export const updatePostById = async (data) => {
   const token = localStorage.getItem('token');
   const bodyFormData = new FormData();
-  data.attachment.map((item) => bodyFormData.append('attachment', item));
-  data.previous_files.map((item) => bodyFormData.append('previous_files[]', item));
+  if (data.attachment !== undefined && data.attachment.length > 0 && data.attachment !== null) {
+    data.attachment.map((item) => bodyFormData.append('attachment', item));
+  }
+  if (data.previous_files !== undefined && data.previous_files.length > 0 && data.previous_files !== null) {
+    data.previous_files.map((item) => bodyFormData.append('previous_files[]', item));
+  } else {
+    bodyFormData.append('previous_files', []);
+  }
   bodyFormData.append('content', data.content);
   bodyFormData.append('video', data.video);
   bodyFormData.append('post_id', data.post_id);

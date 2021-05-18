@@ -22,7 +22,7 @@ const CardNotiCate = ({
   const images = item.files_url;
   const preFile = [];
 
-  if (images !== undefined) {
+  if (images !== undefined && images.length > 0) {
     images.map((i) => preFile.push({
       uid: images.indexOf(i),
       name: 'previous.file',
@@ -43,6 +43,8 @@ const CardNotiCate = ({
   useEffect(async () => {
     setHeader(item.header);
     setContent(item.content);
+    setPreFile(preFile);
+    setFile([]);
     const data = await getUser(item.poster);
     setEditor(data);
   }, [editUpdated]);
@@ -82,17 +84,17 @@ const CardNotiCate = ({
   const handleEditNotify = async () => {
     const { _id } = item.category;
     const previous_files = [];
-    if (previousFiles && previousFiles.length > 0) {
-      previousFiles.map((i) => previous_files.push(i.src));
-    }
     const data = {
       header,
       content,
       attachment: currentFile,
       notify_id: item._id,
       category: _id,
-      previous_files,
     };
+    if (previousFiles && previousFiles.length > 0) {
+      previousFiles.map((i) => previous_files.push(i.src));
+      data.previous_files = previous_files;
+    }
     console.log(data);
     const res = await updateNoti(data);
     if (res.code === 1) {
@@ -102,7 +104,10 @@ const CardNotiCate = ({
       showStatus('error', res.message);
     }
     setIsModalVisible(false);
-    setFile([]);
+    // setHeader(item.header);
+    // setContent(item.content);
+    // setFile([]);
+    // setPreFile(preFile);
   };
 
   const handleOk = () => {
@@ -176,7 +181,7 @@ const CardNotiCate = ({
       }
       return false;
     },
-    defaultFileList: previousFiles,
+    defaultFileList: preFile,
     currentFile,
   };
 

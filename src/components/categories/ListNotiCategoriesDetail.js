@@ -7,21 +7,27 @@ import CardNotiCate from './CardNotiCate';
 import AdvanceHeader from '../general/AdvanceHeader';
 import Footer from '../general/Footer';
 
+let postHere = [];
+let currentPage = 1;
+
 const ListNotiCategoriesDetail = ({
   notiUpdated, aliasKey,
 }) => {
   const [loading, setLoading] = useState(true);
   const [cate, setCate] = useState({});
   const [hasMore, setHasMore] = useState(true);
-  let currentPage = 1;
   const nodeRoot = document.getElementById('root');
   const [notiList, setList] = useState([]);
 
   const getData = async () => {
     const resCate = await findCategoryByAliasKey(aliasKey);
     const res = await getNotiByCategory(resCate._id, currentPage);
-    if (res.length > 0) {
-      setList(notiList.concat(res));
+    if (res.length > 0 && currentPage !== 1) {
+      setList(postHere.concat(res));
+      postHere = postHere.concat(res);
+    } else if (currentPage === 1) {
+      setList(res);
+      postHere = res;
     } else {
       setHasMore(false);
     }
@@ -41,9 +47,11 @@ const ListNotiCategoriesDetail = ({
 
   useEffect(() => {
     getData();
+    currentPage = 1;
   }, [notiUpdated]);
 
   useEffect(() => {
+    currentPage = 1;
     nodeRoot.addEventListener('scroll', handleScroll);
     return () => nodeRoot.removeEventListener('scroll', handleScroll);
   }, []);

@@ -51,12 +51,13 @@ const NewsFeed = ({
   };
 
   useEffect(() => {
-    getData();
+    currentPage = 1;
     nodeRoot.addEventListener('scroll', handleScroll);
     return () => nodeRoot.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
+    currentPage = 1;
     getData();
   }, [postUpdated]);
 

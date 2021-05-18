@@ -79,11 +79,14 @@ export const updateNoti = async (data) => {
   bodyFormData.append('content', data.content);
   bodyFormData.append('category', data.category);
   console.log('hello');
-  if (data.attachment !== undefined) {
+  console.log(data);
+  if (data.attachment !== undefined && data.attachment.length > 0 && data.attachment !== null) {
     data.attachment.map((item) => bodyFormData.append('attachment', item));
   }
-  if (data.previous_files !== undefined) {
+  if (data.previous_files !== undefined && data.previous_files !== [] && data.previous_files !== null) {
     data.previous_files.map((item) => bodyFormData.append('previous_files[]', item));
+  } else {
+    bodyFormData.append('previous_files', []);
   }
 
   try {

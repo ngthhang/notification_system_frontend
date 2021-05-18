@@ -47,11 +47,13 @@ const ListNoti = ({
 
   useEffect(() => {
     dispatch(changeRedirect('noti-all'));
+    currentPage = 1;
     nodeRoot.addEventListener('scroll', handleScroll);
     return () => nodeRoot.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(async () => {
+    currentPage = 1;
     getData();
   }, [notiUpdated]);
 

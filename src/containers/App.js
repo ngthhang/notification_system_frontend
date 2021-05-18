@@ -34,7 +34,7 @@ const App = () => {
   // console.log(response);
   console.warn = () => { };
   console.error = () => { };
-  // console.log = () => { };
+  console.log = () => { };
   return (
     <Router>
       <Switch>
